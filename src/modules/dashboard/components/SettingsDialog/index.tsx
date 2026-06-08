@@ -93,11 +93,35 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                 <h5>How to configure your Agent</h5>
                 <ol>
                   <li>Ensure the toggle above is <strong>turned on</strong>.</li>
-                  <li>In your AI agent's config (e.g. Cursor or Claude Desktop), add an <strong>SSE</strong> MCP server with the following URL:</li>
+                  
+                  <div className="mt-4 mb-2"><strong>For Cursor:</strong></div>
+                  <p className="text-sm text-[--color-text-secondary] mb-2">
+                    Add the following to your <code>.cursor/mcp.json</code>:
+                  </p>
+                  <pre><code>{`{
+  "mcpServers": {
+    "preheat": {
+      "type": "sse",
+      "url": "http://localhost:4710/sse"
+    }
+  }
+}`}</code></pre>
+
+                  <div className="mt-4 mb-2"><strong>For Claude Code / Claude Desktop:</strong></div>
+                  <p className="text-sm text-[--color-text-secondary] mb-2">
+                    Add the following to your <code>mcp.json</code> or <code>claude_desktop_config.json</code>:
+                  </p>
+                  <pre><code>{`{
+  "mcpServers": {
+    "preheat": {
+      "command": "npx",
+      "args": ["tsx", "/absolute/path/to/Preheat/scripts/mcp-server/stdio.ts"]
+    }
+  }
+}`}</code></pre>
                 </ol>
-                <pre><code>http://localhost:4710/sse</code></pre>
-                <p className="settings-instructions-note">
-                  * Note: Some agents like Claude Desktop only support stdio locally. For those, you may need an SSE to stdio proxy, or use Cursor which supports SSE natively.
+                <p className="settings-instructions-note mt-2">
+                  * Replace <code>/absolute/path/to/Preheat</code> with the absolute path to this repository.
                 </p>
               </div>
             )}

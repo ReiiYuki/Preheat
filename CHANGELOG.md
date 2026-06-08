@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/ReiiYuki/Preheat/compare/v1.2.0...v1.3.0) (2026-06-08)
+
+
+### Features
+
+* add stdio support and update MCP instructions for Cursor/Claude ([9fde204](https://github.com/ReiiYuki/Preheat/commit/9fde2043a1f20059825f8240a9adfa965b46e008))
+* download button points directly to asset via github api ([e09b782](https://github.com/ReiiYuki/Preheat/commit/e09b78278563ee8ccc79ca543f61d78b704eb2ad))
+* hide MCP settings in browser mode and provide dynamic absolute paths for stdio ([9f667c9](https://github.com/ReiiYuki/Preheat/commit/9f667c9499c0944846efe32c08dfe51ccbf73219))
+* host desktop binaries on github pages ([5f5ca97](https://github.com/ReiiYuki/Preheat/commit/5f5ca97c9700691ce7f48555faba810ad844e6b8))
+* responsive sidebar with auto-hide and download button for browser mode ([7d2f3bd](https://github.com/ReiiYuki/Preheat/commit/7d2f3bd7fd474e46cca7f0f0ccdf8c6aede3ba90))
+* run MCP server locally via SSE on app startup ([dfc4132](https://github.com/ReiiYuki/Preheat/commit/dfc4132c3ba42755c17b9abe0c355741f1cb530a))
+
 # [1.2.0](https://github.com/ReiiYuki/Preheat/compare/v1.1.0...v1.2.0) (2026-06-08)
 
 

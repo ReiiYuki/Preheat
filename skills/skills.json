@@ -1,0 +1,33 @@
+{
+  "name": "preheat-skills",
+  "version": "1.0.0",
+  "description": "Predefined agent skills for Preheat - AI-powered development planning tool",
+  "repository": "https://github.com/ReiiYuki/Preheat",
+  "skills": [
+    {
+      "name": "preheat-connect-project",
+      "path": "preheat-connect-project/SKILL.md",
+      "description": "Connect the current working project/codebase to a Preheat plan"
+    },
+    {
+      "name": "preheat-pick-pending-plan",
+      "path": "preheat-pick-pending-plan/SKILL.md",
+      "description": "Pick a pending plan from Preheat to continue working on"
+    },
+    {
+      "name": "preheat-remove-completed-plan",
+      "path": "preheat-remove-completed-plan/SKILL.md",
+      "description": "Remove a plan from Preheat after it has been completed"
+    }
+  ],
+  "mcp": {
+    "server": "preheat",
+    "stdio": {
+      "command": "node",
+      "args": ["src-tauri/mcp-server.cjs", "--stdio"]
+    },
+    "sse": {
+      "url": "http://127.0.0.1:4710/sse"
+    }
+  }
+}

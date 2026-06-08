@@ -89,6 +89,18 @@ If the first method doesn't work, you can clear the quarantine flag via terminal
 xattr -cr /Applications/Preheat.app
 ```
 
+### Windows App Blocked ("Windows protected your PC")
+Because Preheat is currently an unsigned open-source application, Microsoft SmartScreen may show a warning when you try to install or run it. To install:
+1. Click **More info** on the blue warning dialog.
+2. Click the **Run anyway** button that appears.
+
+### Linux AppImage Setup
+Linux AppImages need to be marked as executable before they can be run:
+1. Right-click the downloaded `.AppImage` file and select **Properties**.
+2. Go to the **Permissions** tab and check **Allow executing file as program**.
+3. Double-click the file to run it. 
+*(Alternatively, run `chmod +x filename.AppImage` in your terminal).*
+
 ### MCP Server Connection Issues (Cursor & AI Clients)
 If your AI client (like Cursor) fails to connect to the Preheat MCP Server or shows 0 tools:
 1. Ensure **Local MCP Server Sync** is enabled in the Preheat desktop app Settings.

@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/ReiiYuki/Preheat/compare/v1.1.0...v1.2.0) (2026-06-08)
+
+
+### Bug Fixes
+
+* github pages basepath and convert logo to svg ([c712890](https://github.com/ReiiYuki/Preheat/commit/c7128906f6d76543088de68a5caeb349f0454aba))
+* make logo explicitly use color-text variable ([7250cec](https://github.com/ReiiYuki/Preheat/commit/7250cece90e4b2433b695ee2469d09b5e4cf0939))
+
+
+### Features
+
+* restructure mcp server, update README, trim logo and remove dead code ([453a123](https://github.com/ReiiYuki/Preheat/commit/453a123cb0e433f90d69b1af0e8e1e6dd588e89e))
+
 # [1.1.0](https://github.com/ReiiYuki/Preheat/compare/v1.0.0...v1.1.0) (2026-06-08)
 
 

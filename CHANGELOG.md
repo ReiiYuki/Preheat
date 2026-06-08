@@ -1,3 +1,12 @@
+# [1.6.0](https://github.com/ReiiYuki/Preheat/compare/v1.5.0...v1.6.0) (2026-06-08)
+
+
+### Features
+
+* add Agent Skills step to tutorial instructions ([489dcc5](https://github.com/ReiiYuki/Preheat/commit/489dcc5b1523b8f40fff97d5c37f8a4a441e9c04))
+* add predefined agent skills for CLI crawling ([ea2915c](https://github.com/ReiiYuki/Preheat/commit/ea2915c6b0e7eb16abe436143ec01d110dfa222d))
+* pre-generate HTML for GitHub Pages, update version to 1.4.0, add system tray for background running ([7524b94](https://github.com/ReiiYuki/Preheat/commit/7524b944deff9369223b276a050dd4715318c48e))
+
 # [1.5.0](https://github.com/ReiiYuki/Preheat/compare/v1.4.0...v1.5.0) (2026-06-08)
 
 

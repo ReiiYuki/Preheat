@@ -34,6 +34,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
   
   const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
   const [platform, setPlatform] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     if (!isTauri && typeof window !== 'undefined') {
@@ -43,6 +44,39 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
       else if (ua.includes('linux') && !ua.includes('android')) setPlatform('linux');
     }
   }, [isTauri]);
+
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!platform || downloading) return;
+    
+    setDownloading(true);
+    try {
+      const response = await fetch('https://api.github.com/repos/ReiiYuki/Preheat/releases/tags/latest');
+      if (!response.ok) throw new Error('Failed to fetch release info');
+      const data = await response.json();
+      
+      let asset = null;
+      if (platform === 'mac') {
+        asset = data.assets.find((a: any) => a.name.endsWith('.dmg') || a.name.endsWith('.app.tar.gz'));
+      } else if (platform === 'windows') {
+        asset = data.assets.find((a: any) => a.name.endsWith('.exe') || a.name.endsWith('.msi'));
+      } else if (platform === 'linux') {
+        asset = data.assets.find((a: any) => a.name.endsWith('.AppImage') || a.name.endsWith('.deb'));
+      }
+      
+      if (asset && asset.browser_download_url) {
+        window.location.href = asset.browser_download_url;
+      } else {
+        // Fallback to releases page if asset not found
+        window.open('https://github.com/ReiiYuki/Preheat/releases/latest', '_blank');
+      }
+    } catch (error) {
+      console.error('Download failed:', error);
+      window.open('https://github.com/ReiiYuki/Preheat/releases/latest', '_blank');
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   useEffect(() => {
     if (renamingProjectId && renameInputRef.current) {
@@ -206,14 +240,13 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
           </button>
           
           {!isTauri && platform && (
-            <a 
-              href="https://github.com/ReiiYuki/Preheat/releases/latest" 
-              target="_blank" 
-              rel="noreferrer"
-              className="block bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[var(--color-primary)] font-semibold text-left w-full transition-colors font-inherit hover:text-[var(--color-primary-hover)] no-underline"
+            <button 
+              onClick={handleDownload}
+              disabled={downloading}
+              className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[var(--color-primary)] font-semibold text-left w-full transition-colors font-inherit hover:text-[var(--color-primary-hover)] disabled:opacity-50 disabled:cursor-wait"
             >
-              ⬇ Download for {platform === 'mac' ? 'macOS' : platform === 'windows' ? 'Windows' : 'Linux'}
-            </a>
+              {downloading ? '⬇ Fetching...' : `⬇ Download for ${platform === 'mac' ? 'macOS' : platform === 'windows' ? 'Windows' : 'Linux'}`}
+            </button>
           )}
         </div>
       </div>

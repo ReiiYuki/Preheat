@@ -38,7 +38,7 @@ test.describe('Preheat Workflow', () => {
 
     // Add another project so we can delete one
     await page.getByRole('button', { name: '+ New Project' }).click();
-    await expect(page.getByText('New Project')).toBeVisible();
+    await expect(page.getByText('New Project', { exact: true })).toBeVisible();
 
     // Now delete 'Test Project'
     const testProjectRow = page.locator('.group').filter({ hasText: /^Test Project/ }).first();
@@ -52,6 +52,6 @@ test.describe('Preheat Workflow', () => {
     
     // The project should be removed from the sidebar
     await expect(page.getByText('Test Project')).not.toBeVisible();
-    await expect(page.getByText('New Project')).toBeVisible();
+    await expect(page.getByText('New Project', { exact: true })).toBeVisible();
   });
 });

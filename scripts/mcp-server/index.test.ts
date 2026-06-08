@@ -37,7 +37,7 @@ describe('MCP Server Unit Tests', () => {
   afterEach(async () => {
     try {
       await fs.unlink(TEST_STATE_FILE);
-    } catch (e) {
+    } catch {
       // Ignore cleanup errors
     }
   });

@@ -41,7 +41,7 @@ test.describe('MCP Server E2E (SSE)', () => {
     }
     try {
       await fs.unlink(stateFile);
-    } catch (e) {
+    } catch {
       // ignore
     }
   });

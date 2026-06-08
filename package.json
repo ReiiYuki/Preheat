@@ -2,6 +2,7 @@
   "name": "preheat",
   "private": true,
   "version": "0.0.0",
+  "repository": "ReiiYuki/Preheat",
   "type": "module",
   "scripts": {
     "dev": "vite",

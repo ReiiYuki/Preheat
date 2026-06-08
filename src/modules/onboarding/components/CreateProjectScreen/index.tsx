@@ -25,15 +25,15 @@ export function CreateProjectScreen() {
         
         <form onSubmit={handleSubmit}>
           <Input 
-            className="w-full border border-[--color-border] rounded-lg py-3 px-4 text-base outline-none transition-colors bg-[--color-bg] text-[--color-text] box-border font-inherit focus:border-[--color-accent]"
-            placeholder="Project Name" 
+            className="w-full border border-[--color-border] rounded-[24px] py-3 px-5 text-base outline-none transition-colors bg-[--color-bg] text-[--color-text] box-border font-inherit focus:border-[--color-accent]"
+            placeholder="e.g. Website Redesign" 
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoFocus
           />
           <button 
             type="submit" 
-            className="w-full bg-[--color-text] text-[--color-bg] border-none rounded-lg p-3 text-base font-medium cursor-pointer mt-4 transition-opacity font-inherit disabled:opacity-30 disabled:cursor-not-allowed"
+            className="btn-primary w-full rounded-[24px] p-3 text-base font-medium cursor-pointer mt-4 transition-opacity font-inherit disabled:opacity-30 disabled:cursor-not-allowed"
             disabled={!name.trim()}
           >
             Create Project

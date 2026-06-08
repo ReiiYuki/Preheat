@@ -19,6 +19,7 @@ export interface AppStateContextValue {
   deletePlan: (planId: string) => void;
   renameProject: (projectId: string, name: string) => void;
   markTutorialSeen: () => void;
+  toggleMcpEnabled: () => void;
 }
 
 export const AppStateContext = createContext<AppStateContextValue | null>(null);
@@ -48,7 +49,8 @@ type Action =
   | { type: 'DELETE_PROJECT'; projectId: string }
   | { type: 'DELETE_PLAN'; planId: string }
   | { type: 'RENAME_PROJECT'; projectId: string; name: string }
-  | { type: 'MARK_TUTORIAL_SEEN' };
+  | { type: 'MARK_TUTORIAL_SEEN' }
+  | { type: 'TOGGLE_MCP_ENABLED' };
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -166,6 +168,11 @@ function reducer(state: AppState, action: Action): AppState {
     case 'MARK_TUTORIAL_SEEN':
       return { ...state, hasSeenTutorial: true };
 
+    case 'TOGGLE_MCP_ENABLED':
+      return {
+        ...state,
+        mcpEnabled: !state.mcpEnabled,
+      };
     default:
       return state;
   }
@@ -196,7 +203,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   // Set up Tauri file watcher to sync from MCP server or external changes
   useEffect(() => {
-    if (!window.__TAURI__) return;
+    if (!window.__TAURI__ || !state.mcpEnabled) return;
 
     let unwatch: (() => void) | undefined;
     let timeoutId: any;
@@ -230,7 +237,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       clearTimeout(timeoutId);
       if (unwatch) unwatch();
     };
-  }, []);
+  }, [state.mcpEnabled]);
 
   useEffect(() => {
     if (isLoaded) {
@@ -242,28 +249,38 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     return null;
   }
 
-  const value: AppStateContextValue = {
-    state,
-    setUser: (name) => dispatch({ type: 'SET_USER', name }),
-    addProject: (name) => dispatch({ type: 'ADD_PROJECT', name }),
-    addPlan: (projectId) => dispatch({ type: 'ADD_PLAN', projectId }),
-    updatePlanTitle: (planId, title) =>
-      dispatch({ type: 'UPDATE_PLAN_TITLE', planId, title }),
-    updatePlanContent: (planId, content) =>
-      dispatch({ type: 'UPDATE_PLAN_CONTENT', planId, content }),
-    setActiveProject: (projectId) =>
-      dispatch({ type: 'SET_ACTIVE_PROJECT', projectId }),
-    setActivePlan: (planId) => dispatch({ type: 'SET_ACTIVE_PLAN', planId }),
-    deleteProject: (projectId) =>
-      dispatch({ type: 'DELETE_PROJECT', projectId }),
-    deletePlan: (planId) => dispatch({ type: 'DELETE_PLAN', planId }),
-    renameProject: (projectId, name) =>
-      dispatch({ type: 'RENAME_PROJECT', projectId, name }),
-    markTutorialSeen: () => dispatch({ type: 'MARK_TUTORIAL_SEEN' }),
-  };
+
+  const setUser = (name: string) => dispatch({ type: 'SET_USER', name });
+  const addProject = (name: string) => dispatch({ type: 'ADD_PROJECT', name });
+  const addPlan = (projectId: string) => dispatch({ type: 'ADD_PLAN', projectId });
+  const updatePlanTitle = (planId: string, title: string) => dispatch({ type: 'UPDATE_PLAN_TITLE', planId, title });
+  const updatePlanContent = (planId: string, content: string) => dispatch({ type: 'UPDATE_PLAN_CONTENT', planId, content });
+  const setActiveProject = (projectId: string) => dispatch({ type: 'SET_ACTIVE_PROJECT', projectId });
+  const setActivePlan = (planId: string) => dispatch({ type: 'SET_ACTIVE_PLAN', planId });
+  const deleteProject = (projectId: string) => dispatch({ type: 'DELETE_PROJECT', projectId });
+  const deletePlan = (planId: string) => dispatch({ type: 'DELETE_PLAN', planId });
+  const renameProject = (projectId: string, name: string) => dispatch({ type: 'RENAME_PROJECT', projectId, name });
+  const markTutorialSeen = () => dispatch({ type: 'MARK_TUTORIAL_SEEN' });
+  const toggleMcpEnabled = () => dispatch({ type: 'TOGGLE_MCP_ENABLED' });
 
   return (
-    <AppStateContext.Provider value={value}>
+    <AppStateContext.Provider
+      value={{
+        state,
+        setUser,
+        addProject,
+        deleteProject,
+        renameProject,
+        setActiveProject,
+        addPlan,
+        updatePlanTitle,
+        updatePlanContent,
+        deletePlan,
+        setActivePlan,
+        markTutorialSeen,
+        toggleMcpEnabled,
+      }}
+    >
       {children}
     </AppStateContext.Provider>
   );

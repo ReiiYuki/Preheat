@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/modules/core/hooks/useAppState';
 import { Dialog } from '@base-ui/react/dialog';
 import { TutorialDialog } from '../TutorialDialog';
+import { SettingsDialog } from '../SettingsDialog';
+import './Sidebar.css';
 
 export function Sidebar() {
   const {
@@ -23,6 +25,7 @@ export function Sidebar() {
   const [itemToDelete, setItemToDelete] = useState<{ id: string; isProject: boolean } | null>(null);
 
   const [isTutorialOpen, setIsTutorialOpen] = useState(!state.hasSeenTutorial);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     if (renamingProjectId && renameInputRef.current) {
@@ -76,7 +79,7 @@ export function Sidebar() {
           return (
             <div key={project.id}>
               <div 
-                className={`group cursor-pointer px-5 py-1.5 text-sm text-[--color-text] transition-colors flex items-center justify-between relative hover:bg-[--color-hover] ${isActive ? 'font-medium' : ''}`}
+                className={`sidebar-item group cursor-pointer text-sm text-[--color-text] transition-all flex items-center justify-between relative hover:bg-[--color-hover] ${isActive ? 'sidebar-item-active' : ''}`}
                 onClick={() => setActiveProject(project.id)}
               >
                 {renamingProjectId === project.id ? (
@@ -113,7 +116,7 @@ export function Sidebar() {
                   {project.plans.map(plan => (
                     <div 
                       key={plan.id}
-                      className={`group pl-9 pr-5 py-1 text-[13px] text-[--color-text-secondary] cursor-pointer transition-all border-l-2 flex items-center justify-between relative hover:bg-[--color-hover] ${plan.id === state.activePlanId ? 'text-[--color-text] border-[--color-accent] bg-[--color-hover]' : 'border-transparent'}`}
+                      className={`sidebar-plan-item group text-[13px] text-[--color-text-secondary] cursor-pointer transition-all flex items-center justify-between relative hover:bg-[--color-hover] ${plan.id === state.activePlanId ? 'sidebar-plan-item-active' : ''}`}
                       onClick={() => setActivePlan(plan.id)}
                     >
                       <span className="flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -131,7 +134,7 @@ export function Sidebar() {
                     </div>
                   ))}
                   <button 
-                    className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary] pl-9 mt-1"
+                    className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary] pl-10 mt-1"
                     onClick={() => addPlan(project.id)}
                   >
                     + New Plan
@@ -145,35 +148,45 @@ export function Sidebar() {
 
       <div className="mt-auto py-3 border-t border-[--color-border]">
         <button 
-          className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
+          className="bg-transparent border-none cursor-pointer px-5 py-2 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
           onClick={() => addProject('New Project')}
         >
           + New Project
         </button>
-        <button 
-          className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
-          onClick={() => setIsTutorialOpen(true)}
-        >
-          ? Instructions
-        </button>
+        <div className="sidebar-footer">
+          {window.__TAURI__ && (
+            <button
+              className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
+              onClick={() => setSettingsOpen(true)}
+            >
+              ⚙ Settings
+            </button>
+          )}
+          <button 
+            className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
+            onClick={() => setIsTutorialOpen(true)}
+          >
+            ? Instructions
+          </button>
+        </div>
       </div>
 
       <Dialog.Root open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <Dialog.Portal>
           <Dialog.Backdrop className="fixed inset-0 bg-black/30 z-[100]" />
-          <Dialog.Popup className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[--color-bg] rounded-xl p-6 min-w-[320px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] z-[101]">
-            <Dialog.Title className="text-base font-semibold mb-2 text-[--color-text]">
+          <Dialog.Popup className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[--color-bg] rounded-[24px] p-8 min-w-[320px] shadow-lg z-[101]">
+            <Dialog.Title className="text-lg font-bold mb-2 text-[--color-text]">
               Delete {itemToDelete?.isProject ? 'Project' : 'Plan'}
             </Dialog.Title>
             <Dialog.Description className="text-sm text-[--color-text-secondary] mb-4">
               Are you sure you want to delete this {itemToDelete?.isProject ? 'project' : 'plan'}? This action cannot be undone.
             </Dialog.Description>
             <div className="flex gap-2 justify-end">
-              <Dialog.Close className="px-4 py-1.5 rounded-md text-[13px] font-inherit cursor-pointer border border-[--color-border] bg-[--color-bg] text-[--color-text] transition-colors hover:bg-[--color-hover]">
+              <Dialog.Close className="px-5 py-2 rounded-[16px] text-[13px] font-inherit cursor-pointer border border-[--color-border] bg-[--color-bg] text-[--color-text] transition-colors hover:bg-[--color-surface]">
                 Cancel
               </Dialog.Close>
               <button 
-                className="px-4 py-1.5 rounded-md text-[13px] font-inherit cursor-pointer border border-red-600 bg-red-600 text-white transition-colors hover:opacity-90"
+                className="px-5 py-2 rounded-[16px] text-[13px] font-inherit cursor-pointer border-none bg-red-500 text-white transition-opacity hover:opacity-90"
                 onClick={handleDelete}
               >
                 Delete
@@ -184,6 +197,7 @@ export function Sidebar() {
       </Dialog.Root>
 
       <TutorialDialog open={isTutorialOpen} onOpenChange={setIsTutorialOpen} />
+      <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
   );
 }

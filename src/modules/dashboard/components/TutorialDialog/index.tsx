@@ -57,13 +57,13 @@ export function TutorialDialog({ open, onOpenChange }: TutorialDialogProps) {
     }}>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 bg-black/30 z-[100]" />
-        <Dialog.Popup className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[--color-bg] rounded-xl p-8 min-w-[400px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] z-[101]">
+        <Dialog.Popup className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[--color-bg] rounded-[24px] p-10 min-w-[480px] shadow-lg z-[101]">
           
           <div className="flex items-center justify-between mb-4">
-            <Dialog.Title className="text-lg font-semibold text-[--color-text]">
+            <Dialog.Title className="text-xl font-bold text-[--color-text]">
               {steps[step].title}
             </Dialog.Title>
-            <div className="text-xs text-[--color-text-tertiary] font-medium tracking-widest uppercase">
+            <div className="text-[11px] text-[--color-text-tertiary] font-bold tracking-widest uppercase bg-[--color-surface] px-3 py-1 rounded-full">
               Step {step + 1} of {steps.length}
             </div>
           </div>
@@ -72,12 +72,13 @@ export function TutorialDialog({ open, onOpenChange }: TutorialDialogProps) {
             {steps[step].content}
           </Dialog.Description>
           
-          <div className="flex gap-3 justify-between items-center mt-4">
-            <div className="flex gap-1">
+          <div className="flex gap-4 justify-between items-center mt-6">
+            <div className="flex gap-1.5">
               {steps.map((_, i) => (
                 <div 
                   key={i} 
-                  className={`w-2 h-2 rounded-full transition-colors ${i === step ? 'bg-[--color-accent]' : 'bg-[--color-border]'}`}
+                  className={`w-2 h-2 rounded-full transition-all ${i === step ? 'bg-[var(--gradient-primary)] w-4' : 'bg-[--color-border]'}`}
+                  style={i === step ? { background: 'var(--gradient-primary)' } : {}}
                 />
               ))}
             </div>
@@ -85,14 +86,14 @@ export function TutorialDialog({ open, onOpenChange }: TutorialDialogProps) {
             <div className="flex gap-2">
               {step > 0 && (
                 <button 
-                  className="px-4 py-1.5 rounded-md text-[13px] font-inherit cursor-pointer border border-[--color-border] bg-[--color-bg] text-[--color-text] transition-colors hover:bg-[--color-hover]"
+                  className="px-5 py-2 rounded-[16px] text-[13px] font-inherit cursor-pointer border border-[--color-border] bg-[--color-bg] text-[--color-text] transition-colors hover:bg-[--color-surface]"
                   onClick={handlePrev}
                 >
                   Back
                 </button>
               )}
               <button 
-                className="px-4 py-1.5 rounded-md text-[13px] font-inherit cursor-pointer border border-[--color-text] bg-[--color-text] text-[--color-bg] transition-colors hover:opacity-90"
+                className="btn-primary px-5 py-2 rounded-[16px] text-[13px] font-inherit cursor-pointer transition-opacity"
                 onClick={handleNext}
               >
                 {step === steps.length - 1 ? 'Get Started' : 'Next'}

@@ -19,6 +19,7 @@ export interface AppState {
   activeProjectId: string | null;
   activePlanId: string | null;
   hasSeenTutorial?: boolean;
+  mcpEnabled?: boolean;
 }
 
 export type AppScreen = 'welcome' | 'create-project' | 'dashboard';

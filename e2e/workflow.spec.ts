@@ -14,13 +14,17 @@ test.describe('Preheat Workflow', () => {
 
     // 2. Create Project
     await expect(page.getByText('What are you working on next?')).toBeVisible();
-    await page.getByPlaceholder('Project Name').fill('Test Project');
+    await page.getByPlaceholder('e.g. Website Redesign').fill('Test Project');
     await page.getByRole('button', { name: 'Create Project' }).click();
 
     // 3. Dashboard
     // Wait for dashboard to load
     await expect(page.getByText('Hi, Test User')).toBeVisible();
     await expect(page.getByText('Test Project')).toBeVisible();
+
+    // Close Tutorial Dialog
+    await expect(page.getByText('Welcome to Preheat')).toBeVisible();
+    await page.getByRole('button', { name: '✕' }).click();
 
     // Type in editor
     // Editor uses tiptap contenteditable
@@ -41,13 +45,13 @@ test.describe('Preheat Workflow', () => {
     await expect(page.getByText('New Project', { exact: true })).toBeVisible();
 
     // Now delete 'Test Project'
-    const testProjectRow = page.locator('.group').filter({ hasText: /^Test Project/ }).first();
+    const testProjectRow = page.locator('.sidebar-item').filter({ hasText: /^Test Project/ }).first();
     await testProjectRow.hover();
     const deleteProjectBtn = testProjectRow.locator('button[title="Delete Project"]');
     await deleteProjectBtn.click();
     
     // Dialog shows up
-    await expect(page.getByText('Are you sure you want to delete this project?')).toBeVisible();
+    await expect(page.getByText('Are you sure you want to delete this project? This action cannot be undone.')).toBeVisible();
     await page.getByRole('button', { name: 'Delete' }).click();
     
     // The project should be removed from the sidebar

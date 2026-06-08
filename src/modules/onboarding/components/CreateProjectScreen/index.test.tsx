@@ -19,7 +19,7 @@ describe('CreateProjectScreen', () => {
     
     expect(getByText('Create Project')).not.toBeNull();
     
-    const input = screen.getByPlaceholderText('Project Name');
+    const input = screen.getByPlaceholderText('e.g. Website Redesign');
     fireEvent.change(input, { target: { value: 'My New Project' } });
     
     const button = screen.getByRole('button', { name: /create project/i });

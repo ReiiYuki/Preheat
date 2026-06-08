@@ -23,8 +23,8 @@ export async function saveState(state: AppState): Promise<void> {
       localStorage.setItem(STORAGE_KEY, compressed);
     }
 
-    // Also sync to local filesystem if running in Tauri
-    if (window.__TAURI__) {
+    // Also sync to local filesystem if running in Tauri and MCP is enabled
+    if (window.__TAURI__ && state.mcpEnabled) {
       try {
         const appDataDirPath = await appDataDir();
         if (!(await exists(appDataDirPath))) {

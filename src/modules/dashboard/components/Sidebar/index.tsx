@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/modules/core/hooks/useAppState';
 import { Dialog } from '@base-ui/react/dialog';
+import { Logo } from '@/modules/core/components/Logo';
 import { TutorialDialog } from '../TutorialDialog';
 import { SettingsDialog } from '../SettingsDialog';
 import './Sidebar.css';
@@ -69,7 +70,7 @@ export function Sidebar() {
   return (
     <div className="w-[260px] h-screen bg-[--color-surface] border-r border-[--color-border] flex flex-col shrink-0 overflow-y-auto">
       <div className="flex items-center gap-3 px-5 pt-6 pb-2">
-        <img src="/logo.svg" alt="Preheat Logo" className="w-10 h-10 object-contain drop-shadow-sm" />
+        <Logo className="w-10 h-10 object-contain drop-shadow-sm" style={{ color: 'var(--color-text)' }} />
         <span className="font-bold text-lg tracking-wide text-[--color-text]">Preheat</span>
       </div>
       <div className="font-semibold text-xs text-[--color-text-tertiary] px-5 pb-3 uppercase tracking-wider">

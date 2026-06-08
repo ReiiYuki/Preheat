@@ -42,46 +42,59 @@ describe('MCP Server Unit Tests', () => {
     }
   });
 
-  it('should list projects via get_projects', async () => {
-    const result = await handleCallTool('get_projects', {});
-    expect(result.content[0].text).toContain('Test Project');
-    expect(result.content[0].text).toContain('Test Plan');
+  it('should list all plans via get_all_plans', async () => {
+    const result = await handleCallTool('get_all_plans', {});
+    const plans = JSON.parse(result.content[0].text);
+    expect(plans).toHaveLength(1);
+    expect(plans[0].projectId).toBe('proj-1');
+    expect(plans[0].title).toBe('Test Plan');
   });
 
-  it('should list plans via get_plans', async () => {
-    const result = await handleCallTool('get_plans', { projectId: 'proj-1' });
+  it('should list plans for project via get_all_plans_by_project', async () => {
+    const result = await handleCallTool('get_all_plans_by_project', { projectId: 'proj-1' });
     const plans = JSON.parse(result.content[0].text);
     expect(plans).toHaveLength(1);
     expect(plans[0].title).toBe('Test Plan');
   });
 
-  it('should add a plan via add_plan', async () => {
-    const result = await handleCallTool('add_plan', {
+  it('should add a plan via create_plan', async () => {
+    const result = await handleCallTool('create_plan', {
       projectId: 'proj-1',
       title: 'New Plan',
       content: 'New content'
     });
-    expect(result.content[0].text).toContain('Successfully added plan');
+    expect(result.content[0].text).toContain('Successfully created plan');
 
-    const getResult = await handleCallTool('get_plans', { projectId: 'proj-1' });
+    const getResult = await handleCallTool('get_all_plans_by_project', { projectId: 'proj-1' });
     const plans = JSON.parse(getResult.content[0].text);
     expect(plans).toHaveLength(2);
     expect(plans[1].title).toBe('New Plan');
     expect(plans[1].content).toBe('New content');
   });
 
-  it('should update a plan via update_plan', async () => {
-    const result = await handleCallTool('update_plan', {
+  it('should update a plan via edit_plan', async () => {
+    const result = await handleCallTool('edit_plan', {
       planId: 'plan-1',
       title: 'Updated Title',
       content: 'Updated content'
     });
     expect(result.content[0].text).toContain('Successfully updated plan');
 
-    const getResult = await handleCallTool('get_plans', { projectId: 'proj-1' });
+    const getResult = await handleCallTool('get_all_plans_by_project', { projectId: 'proj-1' });
     const plans = JSON.parse(getResult.content[0].text);
     expect(plans[0].title).toBe('Updated Title');
     expect(plans[0].content).toBe('Updated content');
+  });
+
+  it('should remove a plan via remove_plan', async () => {
+    const result = await handleCallTool('remove_plan', {
+      planId: 'plan-1',
+    });
+    expect(result.content[0].text).toContain('Successfully removed plan');
+
+    const getResult = await handleCallTool('get_all_plans_by_project', { projectId: 'proj-1' });
+    const plans = JSON.parse(getResult.content[0].text);
+    expect(plans).toHaveLength(0);
   });
 
   it('should throw error for unknown tool', async () => {

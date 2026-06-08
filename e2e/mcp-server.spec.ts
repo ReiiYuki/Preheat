@@ -20,7 +20,15 @@ test.describe('MCP Server E2E (SSE)', () => {
         id: 'e2e-proj-1',
         name: 'E2E Project',
         createdAt: Date.now(),
-        plans: []
+        plans: [
+          {
+            id: 'e2e-plan-1',
+            title: 'E2E Test Plan',
+            content: 'Test content',
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+          }
+        ]
       }],
       activeProjectId: null,
       activePlanId: null
@@ -61,13 +69,13 @@ test.describe('MCP Server E2E (SSE)', () => {
     await client.connect(transport);
 
     const callResponse = await client.callTool({
-      name: "get_projects",
+      name: "get_all_plans",
       arguments: {}
     });
 
     expect(callResponse.content).toBeDefined();
     expect(callResponse.content[0].type).toBe('text');
-    expect((callResponse.content[0] as any).text).toContain('E2E Project');
+    expect((callResponse.content[0] as any).text).toContain('E2E Test Plan');
 
     // Clean up client
     await transport.close();

@@ -11,6 +11,8 @@ export function TutorialDialog({ open, onOpenChange }: TutorialDialogProps) {
   const { markTutorialSeen } = useApp();
   const [step, setStep] = useState(0);
 
+  const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
+
   const steps = [
     {
       title: 'Welcome to Preheat',
@@ -28,10 +30,10 @@ export function TutorialDialog({ open, onOpenChange }: TutorialDialogProps) {
       title: 'Privacy First',
       content: 'All your data is stored locally in your browser and works offline. You can also run Preheat as a native desktop app.',
     },
-    {
+    ...(isTauri ? [{
       title: 'Local MCP Server',
       content: 'Using the native desktop app, you can enable the Local MCP Server. This allows external AI agents to read and edit your Preheat plans directly!',
-    }
+    }] : [])
   ];
 
   const handleNext = () => {

@@ -159,12 +159,14 @@ export function Sidebar() {
           + New Project
         </button>
         <div className="sidebar-footer">
-          <button
-            className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
-            onClick={() => setSettingsOpen(true)}
-          >
-            ⚙ Settings
-          </button>
+          {typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window && (
+            <button
+              className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
+              onClick={() => setSettingsOpen(true)}
+            >
+              ⚙ Settings
+            </button>
+          )}
           <button 
             className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
             onClick={() => setIsTutorialOpen(true)}

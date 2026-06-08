@@ -14,12 +14,17 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
 
   const [showInstructions, setShowInstructions] = useState(false);
   const [autostartEnabled, setAutostartEnabled] = useState(false);
+  const [mcpPath, setMcpPath] = useState('');
   const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
 
   useEffect(() => {
     if (isTauri && open) {
       import('@tauri-apps/plugin-autostart').then((autostart) => {
         autostart.isEnabled().then(setAutostartEnabled).catch(console.error);
+      }).catch(console.error);
+
+      import('@tauri-apps/api/path').then(({ resourceDir, join }) => {
+        resourceDir().then(dir => join(dir, 'mcp-server.cjs')).then(setMcpPath).catch(console.error);
       }).catch(console.error);
     }
   }, [isTauri, open]);
@@ -66,39 +71,41 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
               </div>
             )}
 
-            <div className="settings-row">
-              <div className="settings-info">
-                <h4>Local MCP Server Sync</h4>
-                <p>
-                  Sync your data to the local file system for external AI agents (like Claude Desktop or Cursor) to read and edit.
-                </p>
-                <button 
-                  className="settings-link-btn"
-                  onClick={() => setShowInstructions(!showInstructions)}
-                >
-                  {showInstructions ? 'Hide MCP Server Instructions' : 'View MCP Server Instructions'}
-                </button>
-              </div>
-              <Switch.Root
-                className="settings-switch"
-                checked={!!state.mcpEnabled}
-                onCheckedChange={toggleMcpEnabled}
-              >
-                <Switch.Thumb className="settings-switch-thumb" />
-              </Switch.Root>
-            </div>
-            
-            {showInstructions && (
-              <div className="settings-instructions">
-                <h5>How to configure your Agent</h5>
-                <ol>
-                  <li>Ensure the toggle above is <strong>turned on</strong>.</li>
-                  
-                  <div className="mt-4 mb-2"><strong>For Cursor:</strong></div>
-                  <p className="text-sm text-[--color-text-secondary] mb-2">
-                    Add the following to your <code>.cursor/mcp.json</code>:
-                  </p>
-                  <pre><code>{`{
+            {isTauri && (
+              <>
+                <div className="settings-row">
+                  <div className="settings-info">
+                    <h4>Local MCP Server Sync</h4>
+                    <p>
+                      Sync your data to the local file system for external AI agents to read and edit.
+                    </p>
+                    <button 
+                      className="settings-link-btn"
+                      onClick={() => setShowInstructions(!showInstructions)}
+                    >
+                      {showInstructions ? 'Hide MCP Server Instructions' : 'View MCP Server Instructions'}
+                    </button>
+                  </div>
+                  <Switch.Root
+                    className="settings-switch"
+                    checked={!!state.mcpEnabled}
+                    onCheckedChange={toggleMcpEnabled}
+                  >
+                    <Switch.Thumb className="settings-switch-thumb" />
+                  </Switch.Root>
+                </div>
+                
+                {showInstructions && (
+                  <div className="settings-instructions">
+                    <h5>How to configure your Agent</h5>
+                    <ol>
+                      <li>Ensure the toggle above is <strong>turned on</strong>.</li>
+                      
+                      <div className="mt-4 mb-2"><strong>For Agents supporting SSE (Server-Sent Events):</strong></div>
+                      <p className="text-sm text-[--color-text-secondary] mb-2">
+                        Add the following to your agent's config (e.g. <code>mcp.json</code>):
+                      </p>
+                      <pre><code>{`{
   "mcpServers": {
     "preheat": {
       "type": "sse",
@@ -107,23 +114,25 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   }
 }`}</code></pre>
 
-                  <div className="mt-4 mb-2"><strong>For Claude Code / Claude Desktop:</strong></div>
-                  <p className="text-sm text-[--color-text-secondary] mb-2">
-                    Add the following to your <code>mcp.json</code> or <code>claude_desktop_config.json</code>:
-                  </p>
-                  <pre><code>{`{
+                      <div className="mt-4 mb-2"><strong>For Agents requiring STDIO (Standard I/O):</strong></div>
+                      <p className="text-sm text-[--color-text-secondary] mb-2">
+                        Add the following to your agent's config:
+                      </p>
+                      <pre><code>{`{
   "mcpServers": {
     "preheat": {
-      "command": "npx",
-      "args": ["tsx", "/absolute/path/to/Preheat/scripts/mcp-server/stdio.ts"]
+      "command": "node",
+      "args": [
+        "${mcpPath || '/path/to/Preheat/mcp-server.cjs'}",
+        "--stdio"
+      ]
     }
   }
 }`}</code></pre>
-                </ol>
-                <p className="settings-instructions-note mt-2">
-                  * Replace <code>/absolute/path/to/Preheat</code> with the absolute path to this repository.
-                </p>
-              </div>
+                    </ol>
+                  </div>
+                )}
+              </>
             )}
           </div>
           <div className="settings-dialog-actions">

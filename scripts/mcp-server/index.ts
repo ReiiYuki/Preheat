@@ -241,6 +241,12 @@ export { server, getState, saveState };
 let serverInstance: any = null;
 
 export async function run() {
+  if (process.argv.includes('--stdio')) {
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    return;
+  }
+
   const app = new Hono();
   
   app.use('*', cors());
@@ -286,7 +292,7 @@ export async function stop() {
   }
 }
 
-if (process.argv[1] && process.argv[1].includes("mcp-server/index")) {
+if (process.argv[1] && process.argv[1].includes("mcp-server/index") || process.argv.includes("--stdio") || process.argv[1]?.endsWith('mcp-server.cjs')) {
   run().catch((error) => {
     console.error("Fatal error running server:", error);
     process.exit(1);

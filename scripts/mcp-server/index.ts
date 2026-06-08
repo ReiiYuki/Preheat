@@ -231,18 +231,54 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 });
 
+import express from "express";
+import cors from "cors";
+import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+
 export { server, getState, saveState };
 
+let appInstance: express.Express | null = null;
+let serverInstance: any = null;
+
 export async function run() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error("Preheat MCP Server running on stdio");
+  const app = express();
+  appInstance = app;
+  
+  app.use(cors());
+  
+  let transport: SSEServerTransport | null = null;
+  
+  app.get("/sse", async (req, res) => {
+    transport = new SSEServerTransport("/message", res);
+    await server.connect(transport);
+  });
+  
+  app.post("/message", async (req, res) => {
+    if (transport) {
+      await transport.handlePostMessage(req, res);
+    } else {
+      res.status(503).send("SSE transport not initialized yet");
+    }
+  });
+
+  const port = process.env.PORT || 4710;
+  serverInstance = app.listen(port, () => {
+    console.error(`Preheat MCP Server running on SSE at http://localhost:${port}/sse`);
+  });
+  
+  return serverInstance;
 }
 
-if (process.argv[1] && process.argv[1].includes("mcp-server/index.ts")) {
+export async function stop() {
+  if (serverInstance) {
+    serverInstance.close();
+    serverInstance = null;
+  }
+}
+
+if (process.argv[1] && process.argv[1].includes("mcp-server/index")) {
   run().catch((error) => {
     console.error("Fatal error running server:", error);
     process.exit(1);
   });
 }
-

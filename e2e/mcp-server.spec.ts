@@ -3,8 +3,10 @@ import { spawn } from 'node:child_process';
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 
-test.describe('MCP Server E2E', () => {
+test.describe('MCP Server E2E (SSE)', () => {
   let mcpProcess: any;
   let stateFile: string;
 
@@ -36,75 +38,38 @@ test.describe('MCP Server E2E', () => {
     }
   });
 
-  test('should process JSON-RPC messages via stdio', async () => {
+  test('should process JSON-RPC messages via SSE', async () => {
     // Spawn the MCP server via tsx
+    const port = Math.floor(Math.random() * 10000) + 10000; // random port between 10000-20000
     mcpProcess = spawn('npx', ['tsx', 'scripts/mcp-server/index.ts'], {
-      env: { ...process.env, STATE_FILE: stateFile },
-      stdio: ['pipe', 'pipe', 'pipe']
+      env: { ...process.env, STATE_FILE: stateFile, PORT: port.toString() },
+      stdio: 'inherit'
     });
 
-    // We will collect stdout data and check for valid JSON-RPC responses
-    const sendRequest = (request: any): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        const messageHandler = (data: Buffer) => {
-          const lines = data.toString().split('\n').filter(Boolean);
-          for (const line of lines) {
-            try {
-              const response = JSON.parse(line);
-              if (response.id === request.id) {
-                mcpProcess.stdout.off('data', messageHandler);
-                resolve(response);
-              }
-            } catch (e) {
-              // Ignore non-json or incomplete chunks
-            }
-          }
-        };
+    // Wait for server to start
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-        mcpProcess.stdout.on('data', messageHandler);
-        
-        // MCP SDK JSON-RPC format expects a single JSON object per line
-        mcpProcess.stdin.write(JSON.stringify(request) + '\n');
-        
-        // Timeout
-        setTimeout(() => {
-          mcpProcess.stdout.off('data', messageHandler);
-          reject(new Error('Timeout waiting for MCP response'));
-        }, 5000);
-      });
-    };
-
-    // Initialize MCP Server (required by SDK)
-    const initResponse = await sendRequest({
-      jsonrpc: '2.0',
-      id: 1,
-      method: 'initialize',
-      params: {
-        protocolVersion: '2024-11-05',
-        capabilities: {},
-        clientInfo: { name: 'e2e-test', version: '1.0.0' }
-      }
-    });
-    expect(initResponse.result.protocolVersion).toBeDefined();
-
-    // Must send initialized notification
-    mcpProcess.stdin.write(JSON.stringify({
-      jsonrpc: '2.0',
-      method: 'notifications/initialized'
-    }) + '\n');
-
-    // Call get_projects tool
-    const callResponse = await sendRequest({
-      jsonrpc: '2.0',
-      id: 2,
-      method: 'tools/call',
-      params: {
-        name: 'get_projects',
-        arguments: {}
-      }
+    const transport = new SSEClientTransport(new URL(`http://localhost:${port}/sse`));
+    
+    const client = new Client({
+      name: "e2e-test-client",
+      version: "1.0.0",
+    }, {
+      capabilities: {}
     });
 
-    expect(callResponse.result.content).toBeDefined();
-    expect(callResponse.result.content[0].text).toContain('E2E Project');
+    await client.connect(transport);
+
+    const callResponse = await client.callTool({
+      name: "get_projects",
+      arguments: {}
+    });
+
+    expect(callResponse.content).toBeDefined();
+    expect(callResponse.content[0].type).toBe('text');
+    expect((callResponse.content[0] as any).text).toContain('E2E Project');
+
+    // Clean up client
+    await transport.close();
   });
 });

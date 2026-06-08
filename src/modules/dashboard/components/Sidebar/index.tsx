@@ -230,6 +230,15 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
             ? Instructions
           </button>
           
+          <a
+            href="https://github.com/sponsors/ReiiYuki"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[#ff69b4] font-semibold text-left w-full transition-colors font-inherit hover:text-[#ff1493] no-underline block"
+          >
+            💖 Sponsor
+          </a>
+          
           {!isTauri && platform && (
             <button 
               onClick={handleDownload}

@@ -88,3 +88,10 @@ If the first method doesn't work, you can clear the quarantine flag via terminal
 ```bash
 xattr -cr /Applications/Preheat.app
 ```
+
+### MCP Server Connection Issues (Cursor & AI Clients)
+If your AI client (like Cursor) fails to connect to the Preheat MCP Server or shows 0 tools:
+1. Ensure **Local MCP Server Sync** is enabled in the Preheat desktop app Settings.
+2. Click the **"Restart Server"** button inside Preheat's settings to force the local background process to refresh.
+3. In your AI client, ensure the URL (`http://127.0.0.1:4710/sse`) or the absolute command path is exactly correct.
+4. If the client seems stuck, **toggle the MCP connection OFF and back ON** in your client to force it to reconnect.

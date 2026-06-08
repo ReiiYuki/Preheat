@@ -159,3 +159,18 @@ pub fn run() {
         }
     });
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mcp_state_initialization() {
+        let state = McpState {
+            child: Mutex::new(None),
+        };
+        
+        let lock = state.child.lock().unwrap();
+        assert!(lock.is_none(), "McpState should initialize with no child process");
+    }
+}

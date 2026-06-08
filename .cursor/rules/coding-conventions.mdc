@@ -1,0 +1,16 @@
+---
+description: Enforces strict module-based architecture, styling, and testing conventions for Preheat. Apply whenever generating or modifying code.
+globs: src/**/*.ts, src/**/*.tsx
+alwaysApply: false
+---
+
+# Preheat Coding Conventions
+
+1. **Module-Based Structure**: Code must be strictly nested inside `src/modules/<module_name>/<type>/<ItemName>/index.ts(x)`. 
+   - **Rule**: 1 file = 1 function/component.
+2. **Absolute Imports**: Always use `@/...` for cross-directory imports. Never use `../`.
+3. **Styling**: Always use UnoCSS utility classes. Never use inline styles (`style={{...}}`).
+4. **Mandatory Tests**: Every `index.ts` or `index.tsx` file MUST have a sibling `index.test.ts(x)` file. Tests must use `vitest` and `@testing-library/react`.
+5. **Strict Logic Testing**: Tests must actively mock nested dependencies, use `act()` for state changes, and assert on logical outcomes explicitly (no `.toBeDefined()`).
+
+**⚠️ ENFORCEMENT**: After generating or modifying code, you MUST run `pnpm run lint:conventions`.

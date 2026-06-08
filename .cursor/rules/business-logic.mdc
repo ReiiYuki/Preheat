@@ -1,0 +1,26 @@
+---
+description: Business logic, state management, storage, and CI/CD rules for the Preheat app. Apply whenever adding features, modifying state, persisting data, or adjusting pipelines.
+globs: src/modules/core/**/*.ts, src/modules/storage/**/*.ts, .github/workflows/*.yml
+alwaysApply: false
+---
+
+# Preheat Business Logic Constitution
+
+### A. State Management & Data Hierarchy
+1. **Hierarchy**: `User` → has many `Projects` → have many `Plans`.
+2. **Centralized State**: All global state must be manipulated via the `useApp()` hook. 
+3. **No Direct Mutations**: You are forbidden from modifying local states meant for global replication.
+
+### B. Storage & Persistence
+1. **IndexedDB First**: You must rely on `idb-keyval` (IndexedDB) as the primary storage mechanism.
+2. **Compression Enforcement**: Before persisting data, you must compress it using `lz-string`.
+3. **Local Storage**: `localStorage` is maintained strictly as a secondary compressed fallback due to 5MB quota limits.
+
+### C. Content & Markdown Export
+1. **Tiptap Natively**: Internal document content uses Tiptap's HTML/JSON format. 
+2. **Export Transforms**: HTML must be passed through `turndown` to convert to Markdown for export. 
+3. **Dynamic Titles**: When exporting a plan, the plan's `title` must be injected as an `<h1>` header.
+
+### D. CI/CD & Deployments
+1. **Semantic Release**: Deployment scripts must respect `semantic-release` automation.
+2. **Workflow Dispatch**: Release jobs must be triggered manually via `workflow_dispatch`. Do not script automated CD pushes.

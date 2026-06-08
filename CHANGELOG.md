@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/ReiiYuki/Preheat/compare/v1.6.0...v1.7.0) (2026-06-08)
+
+
+### Features
+
+* integrate Github Sponsor link at the bottom of the sidebar ([9bb4e40](https://github.com/ReiiYuki/Preheat/commit/9bb4e403d1e434f9d7608e6d266f0a0623bd8229))
+
 # [1.6.0](https://github.com/ReiiYuki/Preheat/compare/v1.5.0...v1.6.0) (2026-06-08)
 
 

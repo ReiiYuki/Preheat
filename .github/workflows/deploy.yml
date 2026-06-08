@@ -9,7 +9,7 @@ on:
       - master
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-web:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
@@ -45,47 +45,29 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build
+      - name: Build Web
         run: pnpm build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload Web Artifact
+        uses: actions/upload-artifact@v4
         with:
+          name: web-dist
           path: ./dist
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-  prepare-release:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Delete old release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release delete latest --cleanup-tag -y || true
-
   build-desktop:
-    needs: prepare-release
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - platform: macos-latest
-            args: --target universal-apple-darwin
+            target: universal-apple-darwin
+            artifact: desktop-mac
           - platform: ubuntu-22.04
-            args: ''
+            target: ''
+            artifact: desktop-linux
           - platform: windows-latest
-            args: ''
+            target: ''
+            artifact: desktop-windows
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
@@ -108,13 +90,52 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build and Release Desktop
-        uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Tauri
+        run: pnpm tauri build ${{ matrix.target != '' && format('--target {0}', matrix.target) || '' }}
+      - name: Rename and Prepare Artifacts
+        shell: bash
+        run: |
+          mkdir -p upload-bin
+          find src-tauri/target -name "*.dmg" -exec cp {} upload-bin/Preheat-macOS.dmg \; || true
+          find src-tauri/target -name "*.exe" -exec cp {} upload-bin/Preheat-Windows.exe \; || true
+          find src-tauri/target -name "*.AppImage" -exec cp {} upload-bin/Preheat-Linux.AppImage \; || true
+      - name: Upload Desktop Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          tagName: latest
-          releaseName: 'Preheat Desktop (Latest Build)'
-          releaseDraft: false
-          prerelease: false
-          args: ${{ matrix.args }}
+          name: ${{ matrix.artifact }}
+          path: upload-bin/*
+
+  deploy-pages:
+    needs: [build-web, build-desktop]
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download web build
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: dist
+      - name: Download mac desktop
+        uses: actions/download-artifact@v4
+        with:
+          name: desktop-mac
+          path: dist/downloads
+      - name: Download windows desktop
+        uses: actions/download-artifact@v4
+        with:
+          name: desktop-windows
+          path: dist/downloads
+      - name: Download linux desktop
+        uses: actions/download-artifact@v4
+        with:
+          name: desktop-linux
+          path: dist/downloads
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

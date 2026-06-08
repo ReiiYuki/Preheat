@@ -34,7 +34,6 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
   
   const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
   const [platform, setPlatform] = useState<string | null>(null);
-  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     if (!isTauri && typeof window !== 'undefined') {
@@ -45,36 +44,25 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
     }
   }, [isTauri]);
 
-  const handleDownload = async (e: React.MouseEvent) => {
+  const handleDownload = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!platform || downloading) return;
+    if (!platform) return;
     
-    setDownloading(true);
-    try {
-      const response = await fetch('https://api.github.com/repos/ReiiYuki/Preheat/releases/tags/latest');
-      if (!response.ok) throw new Error('Failed to fetch release info');
-      const data = await response.json();
-      
-      let asset = null;
-      if (platform === 'mac') {
-        asset = data.assets.find((a: any) => a.name.endsWith('.dmg') || a.name.endsWith('.app.tar.gz'));
-      } else if (platform === 'windows') {
-        asset = data.assets.find((a: any) => a.name.endsWith('.exe') || a.name.endsWith('.msi'));
-      } else if (platform === 'linux') {
-        asset = data.assets.find((a: any) => a.name.endsWith('.AppImage') || a.name.endsWith('.deb'));
-      }
-      
-      if (asset && asset.browser_download_url) {
-        window.location.href = asset.browser_download_url;
-      } else {
-        // Fallback to releases page if asset not found
-        window.open('https://github.com/ReiiYuki/Preheat/releases/latest', '_blank');
-      }
-    } catch (error) {
-      console.error('Download failed:', error);
-      window.open('https://github.com/ReiiYuki/Preheat/releases/latest', '_blank');
-    } finally {
-      setDownloading(false);
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    let filename = '';
+    
+    if (platform === 'mac') filename = 'Preheat-macOS.dmg';
+    else if (platform === 'windows') filename = 'Preheat-Windows.exe';
+    else if (platform === 'linux') filename = 'Preheat-Linux.AppImage';
+    
+    if (filename) {
+      // Create a temporary anchor element to trigger download
+      const link = document.createElement('a');
+      link.href = `${baseUrl}downloads/${filename}`;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
@@ -242,10 +230,9 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
           {!isTauri && platform && (
             <button 
               onClick={handleDownload}
-              disabled={downloading}
-              className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[var(--color-primary)] font-semibold text-left w-full transition-colors font-inherit hover:text-[var(--color-primary-hover)] disabled:opacity-50 disabled:cursor-wait"
+              className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[var(--color-primary)] font-semibold text-left w-full transition-colors font-inherit hover:text-[var(--color-primary-hover)]"
             >
-              {downloading ? '⬇ Fetching...' : `⬇ Download for ${platform === 'mac' ? 'macOS' : platform === 'windows' ? 'Windows' : 'Linux'}`}
+              ⬇ Download for {platform === 'mac' ? 'macOS' : platform === 'windows' ? 'Windows' : 'Linux'}
             </button>
           )}
         </div>

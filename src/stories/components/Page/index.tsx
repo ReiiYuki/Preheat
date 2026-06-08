@@ -1,8 +1,8 @@
-import React from 'react';
+import { useState } from 'react';
 
 import { createFileRoute } from '@tanstack/react-router';
 
-import { Header } from './Header';
+import { Header } from '@/stories/components/Header';
 
 type User = {
   name: string;
@@ -12,8 +12,8 @@ export const Route = createFileRoute('/')({
   component: () => <Page />,
 });
 
-const Page: React.FC = () => {
-  const [user, setUser] = React.useState<User>();
+export const Page = () => {
+  const [user, setUser] = useState<User>();
 
   return (
     <article>

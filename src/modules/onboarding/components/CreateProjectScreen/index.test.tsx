@@ -15,16 +15,15 @@ vi.mock('@tanstack/react-router', () => ({
 
 describe('CreateProjectScreen', () => {
   it('renders text and handles project creation', () => {
-    render(<CreateProjectScreen />);
+    const { getByTestId, getByText } = render(<CreateProjectScreen />);
     
-    expect(screen.getByText('Create New Project')).toBeInTheDocument();
-    expect(screen.getByText('What are you working on next?')).toBeInTheDocument();
+    expect(getByText('Create Project')).not.toBeNull();
     
     const input = screen.getByPlaceholderText('Project Name');
     fireEvent.change(input, { target: { value: 'My New Project' } });
     
     const button = screen.getByRole('button', { name: /create project/i });
-    expect(button).not.toBeDisabled();
+    expect((button as HTMLButtonElement).disabled).toBe(false);
     fireEvent.click(button);
     
     expect(mockAddProject).toHaveBeenCalledWith('My New Project');

@@ -1,7 +1,6 @@
-import React from 'react';
 
-import { Button } from './Button';
-import './header.css';
+import { Button } from '@/stories/components/Button';
+import './index.css';
 
 type User = {
   name: string;

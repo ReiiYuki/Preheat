@@ -9,7 +9,7 @@ vi.mock('@/modules/onboarding/components/CreateProjectScreen', () => ({
 const mockNavigate = vi.fn();
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
-  createFileRoute: (path: string) => (config: any) => config.component
+  createFileRoute: (_path: string) => (config: any) => config.component
 }));
 
 const mockUseApp = vi.fn();
@@ -19,7 +19,7 @@ vi.mock('@/modules/core/hooks/useAppState', () => ({
 
 describe('CreateProjectPage (Route /create-project/)', () => {
   // @ts-ignore
-  const CreateProjectPage = Route;
+  const CreateProjectPage = Route as any;
 
   beforeEach(() => {
     vi.clearAllMocks();

@@ -31,7 +31,7 @@ describe('AppStateContext', () => {
       );
     });
 
-    expect(resultRef.state).toBeDefined();
+    expect(resultRef.state).not.toBeNull();
     
     // Test setUser
     act(() => {

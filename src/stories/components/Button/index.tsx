@@ -1,5 +1,4 @@
-import React from 'react';
-import './button.css';
+import './index.css';
 
 export interface ButtonProps {
   /** Is this the principal call to action on the page? */
@@ -18,7 +17,7 @@ export interface ButtonProps {
 export const Button = ({
   primary = false,
   size = 'medium',
-  backgroundColor,
+  backgroundColor: _backgroundColor,
   label,
   ...props
 }: ButtonProps) => {
@@ -27,7 +26,6 @@ export const Button = ({
     <button
       type="button"
       className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
-      style={{ backgroundColor }}
       {...props}
     >
       {label}

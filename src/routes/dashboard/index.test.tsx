@@ -9,7 +9,7 @@ vi.mock('@/modules/dashboard/components/Dashboard', () => ({
 const mockNavigate = vi.fn();
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
-  createFileRoute: (path: string) => (config: any) => config.component
+  createFileRoute: (_path: string) => (config: any) => config.component
 }));
 
 const mockUseApp = vi.fn();
@@ -19,7 +19,7 @@ vi.mock('@/modules/core/hooks/useAppState', () => ({
 
 describe('DashboardPage (Route /dashboard/)', () => {
   // @ts-ignore
-  const DashboardPage = Route;
+  const DashboardPage = Route as any;
 
   beforeEach(() => {
     vi.clearAllMocks();

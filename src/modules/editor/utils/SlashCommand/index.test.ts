@@ -4,6 +4,6 @@ import { SlashCommand } from './index';
 describe('SlashCommand', () => {
   it('configures the extension correctly', () => {
     expect(SlashCommand.name).toBe('slashCommand');
-    expect(SlashCommand.options.suggestion).toBeDefined();
+    expect(typeof SlashCommand.options.suggestion).toBe('object');
   });
 });

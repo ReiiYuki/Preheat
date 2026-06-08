@@ -3,6 +3,8 @@ import type { AppState, Plan } from '@/modules/core/types';
 import { saveState } from '@/modules/storage/utils/saveState';
 import { loadState } from '@/modules/storage/utils/loadState';
 import { createContext } from 'react';
+import { watch, readTextFile } from '@tauri-apps/plugin-fs';
+import { appDataDir } from '@tauri-apps/api/path';
 
 export interface AppStateContextValue {
   state: AppState;
@@ -190,6 +192,44 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       }
       setIsLoaded(true);
     });
+  }, []);
+
+  // Set up Tauri file watcher to sync from MCP server or external changes
+  useEffect(() => {
+    if (!window.__TAURI__) return;
+
+    let unwatch: (() => void) | undefined;
+    let timeoutId: any;
+
+    const setupWatcher = async () => {
+      try {
+        const dir = await appDataDir();
+        const filePath = `${dir}/state.json`;
+        
+        unwatch = await watch(filePath, async () => {
+          // Debounce read to avoid multiple rapid events
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(async () => {
+            try {
+              const content = await readTextFile(filePath);
+              const newState = JSON.parse(content);
+              dispatch({ type: 'INIT_STATE', state: newState });
+            } catch (err) {
+              console.error('Failed to read external state change:', err);
+            }
+          }, 100);
+        });
+      } catch (err) {
+        console.error('Failed to setup file watcher:', err);
+      }
+    };
+
+    setupWatcher();
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (unwatch) unwatch();
+    };
   }, []);
 
   useEffect(() => {

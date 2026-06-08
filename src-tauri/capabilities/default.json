@@ -6,6 +6,15 @@
     "main"
   ],
   "permissions": [
-    "core:default"
+    "core:default",
+    "fs:default",
+    "os:default",
+    "fs:allow-app-data-read",
+    "fs:allow-app-data-write",
+    "fs:allow-app-data-mkdir",
+    "fs:allow-app-config-read",
+    "fs:allow-app-config-write",
+    "fs:allow-app-config-mkdir",
+    "fs:allow-exists"
   ]
 }

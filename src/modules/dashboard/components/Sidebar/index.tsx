@@ -69,7 +69,7 @@ export function Sidebar() {
   return (
     <div className="w-[260px] h-screen bg-[--color-surface] border-r border-[--color-border] flex flex-col shrink-0 overflow-y-auto">
       <div className="flex items-center gap-3 px-5 pt-6 pb-2">
-        <img src="/logo.png" alt="Preheat Logo" className="w-10 h-10 object-contain drop-shadow-sm" />
+        <img src="/logo.svg" alt="Preheat Logo" className="w-10 h-10 object-contain drop-shadow-sm" />
         <span className="font-bold text-lg tracking-wide text-[--color-text]">Preheat</span>
       </div>
       <div className="font-semibold text-xs text-[--color-text-tertiary] px-5 pb-3 uppercase tracking-wider">

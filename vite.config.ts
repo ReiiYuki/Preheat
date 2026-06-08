@@ -11,7 +11,7 @@ import UnoCSS from 'unocss/vite';
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-  base: process.env.TAURI_ENV_PLATFORM ? '/' : '/preheat/',
+  base: process.env.TAURI_ENV_PLATFORM ? '/' : '/Preheat/',
   plugins: [
     UnoCSS(), 
     TanStackRouterVite({ routeFileIgnorePattern: '\\\\.test\\\\.(ts|tsx)$' }), 

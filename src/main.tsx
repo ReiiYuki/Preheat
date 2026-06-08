@@ -7,7 +7,7 @@ import { routeTree } from '@/routeTree.gen';
 
 const router = createRouter({ 
   routeTree,
-  basepath: '/preheat/',
+  basepath: import.meta.env.BASE_URL,
   defaultNotFoundComponent: () => <Navigate to="/" />
 });
 

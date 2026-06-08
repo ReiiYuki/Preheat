@@ -32,6 +32,10 @@ describe('TutorialDialog', () => {
 
     // Step 4
     expect(screen.getByText('Privacy First')).toBeInTheDocument();
+    fireEvent.click(nextBtn);
+
+    // Step 5
+    expect(screen.getByText('Local MCP Server')).toBeInTheDocument();
     
     // Finish
     const getStartedBtn = screen.getByRole('button', { name: 'Get Started' });

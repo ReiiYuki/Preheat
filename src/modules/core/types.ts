@@ -18,6 +18,7 @@ export interface AppState {
   projects: Project[];
   activeProjectId: string | null;
   activePlanId: string | null;
+  hasSeenTutorial?: boolean;
 }
 
 export type AppScreen = 'welcome' | 'create-project' | 'dashboard';

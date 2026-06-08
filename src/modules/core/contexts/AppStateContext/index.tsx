@@ -16,6 +16,7 @@ export interface AppStateContextValue {
   deleteProject: (projectId: string) => void;
   deletePlan: (planId: string) => void;
   renameProject: (projectId: string, name: string) => void;
+  markTutorialSeen: () => void;
 }
 
 export const AppStateContext = createContext<AppStateContextValue | null>(null);
@@ -44,7 +45,8 @@ type Action =
   | { type: 'SET_ACTIVE_PLAN'; planId: string }
   | { type: 'DELETE_PROJECT'; projectId: string }
   | { type: 'DELETE_PLAN'; planId: string }
-  | { type: 'RENAME_PROJECT'; projectId: string; name: string };
+  | { type: 'RENAME_PROJECT'; projectId: string; name: string }
+  | { type: 'MARK_TUTORIAL_SEEN' };
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -159,6 +161,9 @@ function reducer(state: AppState, action: Action): AppState {
         ),
       };
 
+    case 'MARK_TUTORIAL_SEEN':
+      return { ...state, hasSeenTutorial: true };
+
     default:
       return state;
   }
@@ -214,6 +219,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     deletePlan: (planId) => dispatch({ type: 'DELETE_PLAN', planId }),
     renameProject: (projectId, name) =>
       dispatch({ type: 'RENAME_PROJECT', projectId, name }),
+    markTutorialSeen: () => dispatch({ type: 'MARK_TUTORIAL_SEEN' }),
   };
 
   return (

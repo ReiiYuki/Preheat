@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/modules/core/hooks/useAppState';
 import { Dialog } from '@base-ui/react/dialog';
+import { TutorialDialog } from '../TutorialDialog';
 
 export function Sidebar() {
   const {
@@ -20,6 +21,8 @@ export function Sidebar() {
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ id: string; isProject: boolean } | null>(null);
+
+  const [isTutorialOpen, setIsTutorialOpen] = useState(!state.hasSeenTutorial);
 
   useEffect(() => {
     if (renamingProjectId && renameInputRef.current) {
@@ -147,6 +150,12 @@ export function Sidebar() {
         >
           + New Project
         </button>
+        <button 
+          className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
+          onClick={() => setIsTutorialOpen(true)}
+        >
+          ? Instructions
+        </button>
       </div>
 
       <Dialog.Root open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -174,6 +183,7 @@ export function Sidebar() {
         </Dialog.Portal>
       </Dialog.Root>
 
+      <TutorialDialog open={isTutorialOpen} onOpenChange={setIsTutorialOpen} />
     </div>
   );
 }

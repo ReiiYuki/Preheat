@@ -18,6 +18,7 @@ vi.mock('@/modules/core/hooks/useAppState', () => ({
     addProject: mockAddProject,
     setActiveProject: mockSetActiveProject,
     renameProject: mockRenameProject,
+    markTutorialSeen: vi.fn(),
   }),
 }));
 

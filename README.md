@@ -72,6 +72,45 @@ The Model Context Protocol (MCP) server allows AI agents to interact with Prehea
 - It can be run manually via `pnpm mcp`.
 - The native Tauri app automatically launches it in the background if enabled in settings.
 
+## Agent Skills
+
+Preheat ships with predefined agent skills that can be installed into your AI coding assistant via [agent-skills-cli](https://github.com/nichochar/agent-skills-cli) or manually.
+
+### Available Skills
+
+| Skill | Description |
+|-------|-------------|
+| `preheat-connect-project` | Connect your current project/codebase to a Preheat plan |
+| `preheat-pick-pending-plan` | Pick a pending plan to continue working on |
+| `preheat-remove-completed-plan` | Remove a plan after it has been completed |
+
+### Install via agent-skills-cli
+
+```bash
+# Install agent-skills-cli if you haven't already
+npm install -g agent-skills-cli
+
+# Pull all Preheat skills into your project
+agent-skills pull github.com/ReiiYuki/Preheat/skills
+```
+
+### Manual Installation
+
+Copy the skill files from the `skills/` directory into your agent's skill configuration directory:
+
+```bash
+# Example: Copy to Gemini CLI skills directory
+cp -r skills/preheat-connect-project ~/.gemini/config/skills/
+cp -r skills/preheat-pick-pending-plan ~/.gemini/config/skills/
+cp -r skills/preheat-remove-completed-plan ~/.gemini/config/skills/
+```
+
+Each skill folder contains a `SKILL.md` file with YAML frontmatter (name, description) and step-by-step instructions that your AI agent will follow automatically.
+
+### Skill Manifest
+
+The `skills/skills.json` file serves as a discovery manifest containing all available skills and the MCP server configuration. CLI tools can use this to auto-configure skills and MCP connections.
+
 ## Troubleshooting
 
 ### macOS App Cannot Be Opened ("Apple could not verify...")

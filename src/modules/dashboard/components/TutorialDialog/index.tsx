@@ -33,7 +33,11 @@ export function TutorialDialog({ open, onOpenChange }: TutorialDialogProps) {
     ...(isTauri ? [{
       title: 'Local MCP Server',
       content: 'Using the native desktop app, you can enable the Local MCP Server. This allows external AI agents to read and edit your Preheat plans directly!',
-    }] : [])
+    }] : []),
+    {
+      title: 'Agent Skills',
+      content: 'Preheat comes with predefined agent skills that teach your AI assistant how to work with your plans. Install them with: agent-skills pull github.com/ReiiYuki/Preheat/skills — then your agent can connect projects, pick pending plans, and clean up completed ones automatically.',
+    }
   ];
 
   const handleNext = () => {

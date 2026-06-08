@@ -16,6 +16,8 @@
   padding: 32px;
   width: 90%;
   max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: var(--shadow-lg);
   z-index: 101;
 }

@@ -93,18 +93,11 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                 <h5>How to configure your Agent</h5>
                 <ol>
                   <li>Ensure the toggle above is <strong>turned on</strong>.</li>
-                  <li>In your AI agent's config (e.g. <code>claude_desktop_config.json</code>), add the following:</li>
+                  <li>In your AI agent's config (e.g. Cursor or Claude Desktop), add an <strong>SSE</strong> MCP server with the following URL:</li>
                 </ol>
-                <pre><code>{`{
-  "mcpServers": {
-    "preheat": {
-      "command": "npx",
-      "args": ["tsx", "/absolute/path/to/Preheat/mcp-server/index.ts"]
-    }
-  }
-}`}</code></pre>
+                <pre><code>http://localhost:4710/sse</code></pre>
                 <p className="settings-instructions-note">
-                  * Replace <code>/absolute/path/to/Preheat</code> with the path to the Preheat repository.
+                  * Note: Some agents like Claude Desktop only support stdio locally. For those, you may need an SSE to stdio proxy, or use Cursor which supports SSE natively.
                 </p>
               </div>
             )}

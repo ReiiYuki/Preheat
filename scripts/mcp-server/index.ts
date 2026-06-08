@@ -231,42 +231,52 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 });
 
-import express from "express";
-import cors from "cors";
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 
 export { server, getState, saveState };
 
-let appInstance: express.Express | null = null;
 let serverInstance: any = null;
 
 export async function run() {
-  const app = express();
-  appInstance = app;
+  const app = new Hono();
   
-  app.use(cors());
+  app.use('*', cors());
   
   let transport: SSEServerTransport | null = null;
   
-  app.get("/sse", async (req, res) => {
-    transport = new SSEServerTransport("/message", res);
+  app.get('/sse', async (c) => {
+    const { outgoing } = c.env as any;
+    transport = new SSEServerTransport('/message', outgoing);
     await server.connect(transport);
+    
+    // Return a Promise that never resolves so Hono doesn't close the stream
+    return new Promise<Response>(() => {});
   });
   
-  app.post("/message", async (req, res) => {
+  app.post('/message', async (c) => {
+    const { incoming, outgoing } = c.env as any;
     if (transport) {
-      await transport.handlePostMessage(req, res);
+      await transport.handlePostMessage(incoming, outgoing);
+      return new Promise<Response>(() => {});
     } else {
-      res.status(503).send("SSE transport not initialized yet");
+      return c.text("SSE transport not initialized yet", 503);
     }
   });
 
-  const port = process.env.PORT || 4710;
-  serverInstance = app.listen(port, () => {
-    console.error(`Preheat MCP Server running on SSE at http://localhost:${port}/sse`);
-  });
+  const port = Number(process.env.PORT) || 4710;
   
-  return serverInstance;
+  return new Promise((resolve) => {
+    serverInstance = serve({
+      fetch: app.fetch,
+      port
+    }, (info) => {
+      console.error(`Preheat MCP Server running on SSE at http://localhost:${info.port}/sse`);
+      resolve(serverInstance);
+    });
+  });
 }
 
 export async function stop() {

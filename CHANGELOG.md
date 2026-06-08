@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/ReiiYuki/Preheat/compare/v1.3.0...v1.4.0) (2026-06-08)
+
+
+### Features
+
+* MCP enhancements, sync status improvements, add MIT license, and README updates ([8bc1ea6](https://github.com/ReiiYuki/Preheat/commit/8bc1ea646670ec85114b79afc2dd0e9947430e74))
+
 # [1.3.0](https://github.com/ReiiYuki/Preheat/compare/v1.2.0...v1.3.0) (2026-06-08)
 
 

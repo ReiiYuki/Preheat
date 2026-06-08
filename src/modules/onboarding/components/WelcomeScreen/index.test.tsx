@@ -15,7 +15,7 @@ vi.mock('@tanstack/react-router', () => ({
 
 describe('WelcomeScreen', () => {
   it('renders text and handles form submission', () => {
-    const { getByTestId, getByText } = render(<WelcomeScreen />);
+    const { getByText } = render(<WelcomeScreen />);
     
     expect(getByText('Continue')).not.toBeNull();
     

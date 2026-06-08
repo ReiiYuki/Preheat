@@ -15,7 +15,7 @@ vi.mock('@tanstack/react-router', () => ({
 
 describe('CreateProjectScreen', () => {
   it('renders text and handles project creation', () => {
-    const { getByTestId, getByText } = render(<CreateProjectScreen />);
+    const { getByText } = render(<CreateProjectScreen />);
     
     expect(getByText('Create Project')).not.toBeNull();
     

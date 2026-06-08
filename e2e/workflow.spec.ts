@@ -45,7 +45,7 @@ test.describe('Preheat Workflow', () => {
     await expect(page.getByText('New Project', { exact: true })).toBeVisible();
 
     // Now delete 'Test Project'
-    const testProjectRow = page.locator('.sidebar-item').filter({ hasText: /^Test Project/ }).first();
+    const testProjectRow = page.locator('div.group').filter({ hasText: /^Test Project/ }).first();
     await testProjectRow.hover();
     const deleteProjectBtn = testProjectRow.locator('button[title="Delete Project"]');
     await deleteProjectBtn.click();

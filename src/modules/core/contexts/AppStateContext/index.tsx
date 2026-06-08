@@ -20,6 +20,10 @@ export interface AppStateContextValue {
   renameProject: (projectId: string, name: string) => void;
   markTutorialSeen: () => void;
   toggleMcpEnabled: () => void;
+  setSyncProvider: (provider: any) => void;
+  setWebhookUrl: (url: string) => void;
+  setFirebaseConfig: (config: string) => void;
+  setSupabaseConfig: (config: { url: string; anonKey: string }) => void;
 }
 
 export const AppStateContext = createContext<AppStateContextValue | null>(null);
@@ -50,7 +54,11 @@ type Action =
   | { type: 'DELETE_PLAN'; planId: string }
   | { type: 'RENAME_PROJECT'; projectId: string; name: string }
   | { type: 'MARK_TUTORIAL_SEEN' }
-  | { type: 'TOGGLE_MCP_ENABLED' };
+  | { type: 'TOGGLE_MCP_ENABLED' }
+  | { type: 'SET_SYNC_PROVIDER'; provider: any }
+  | { type: 'SET_WEBHOOK_URL'; url: string }
+  | { type: 'SET_FIREBASE_CONFIG'; config: string }
+  | { type: 'SET_SUPABASE_CONFIG'; config: { url: string; anonKey: string } };
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -173,6 +181,30 @@ function reducer(state: AppState, action: Action): AppState {
         ...state,
         mcpEnabled: !state.mcpEnabled,
       };
+
+    case 'SET_WEBHOOK_URL':
+      return {
+        ...state,
+        webhookSyncUrl: action.url,
+      };
+
+    case 'SET_SYNC_PROVIDER':
+      return {
+        ...state,
+        syncProvider: action.provider,
+      };
+
+    case 'SET_FIREBASE_CONFIG':
+      return {
+        ...state,
+        firebaseConfig: action.config,
+      };
+
+    case 'SET_SUPABASE_CONFIG':
+      return {
+        ...state,
+        supabaseConfig: action.config,
+      };
     default:
       return state;
   }
@@ -262,6 +294,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const renameProject = (projectId: string, name: string) => dispatch({ type: 'RENAME_PROJECT', projectId, name });
   const markTutorialSeen = () => dispatch({ type: 'MARK_TUTORIAL_SEEN' });
   const toggleMcpEnabled = () => dispatch({ type: 'TOGGLE_MCP_ENABLED' });
+  const setSyncProvider = (provider: any) => dispatch({ type: 'SET_SYNC_PROVIDER', provider });
+  const setWebhookUrl = (url: string) => dispatch({ type: 'SET_WEBHOOK_URL', url });
+  const setFirebaseConfig = (config: string) => dispatch({ type: 'SET_FIREBASE_CONFIG', config });
+  const setSupabaseConfig = (config: { url: string; anonKey: string }) => dispatch({ type: 'SET_SUPABASE_CONFIG', config });
 
   return (
     <AppStateContext.Provider
@@ -279,6 +315,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         setActivePlan,
         markTutorialSeen,
         toggleMcpEnabled,
+        setSyncProvider,
+        setWebhookUrl,
+        setFirebaseConfig,
+        setSupabaseConfig,
       }}
     >
       {children}

@@ -13,6 +13,8 @@ export interface Project {
   createdAt: number;
 }
 
+export type SyncProvider = 'none' | 'webhook' | 'firebase' | 'supabase';
+
 export interface AppState {
   user: { name: string } | null;
   projects: Project[];
@@ -20,4 +22,8 @@ export interface AppState {
   activePlanId: string | null;
   hasSeenTutorial?: boolean;
   mcpEnabled?: boolean;
+  syncProvider?: SyncProvider;
+  webhookSyncUrl?: string;
+  firebaseConfig?: string;
+  supabaseConfig?: { url: string; anonKey: string };
 }

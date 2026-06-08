@@ -18,6 +18,8 @@
     "fs:allow-appconfig-read-recursive",
     "fs:allow-appconfig-write-recursive",
     "fs:allow-exists",
-    "fs:allow-mkdir"
+    "fs:allow-mkdir",
+    "fs:allow-resource-read",
+    "fs:allow-resource-read-recursive"
   ]
 }

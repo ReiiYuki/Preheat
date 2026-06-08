@@ -1,7 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import 'virtual:uno.css';
-import './index.css';
 import { RouterProvider, createRouter, Navigate } from '@tanstack/react-router';
 import { routeTree } from '@/routeTree.gen';
 
@@ -15,6 +14,10 @@ declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
+}
+
+if (typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window) {
+  document.addEventListener('contextmenu', e => e.preventDefault());
 }
 
 createRoot(document.getElementById('root')!).render(

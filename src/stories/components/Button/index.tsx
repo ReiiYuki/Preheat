@@ -1,5 +1,3 @@
-import './index.css';
-
 export interface ButtonProps {
   /** Is this the principal call to action on the page? */
   primary?: boolean;
@@ -21,11 +19,20 @@ export const Button = ({
   label,
   ...props
 }: ButtonProps) => {
-  const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
+  const baseClasses = "inline-block cursor-pointer border-0 rounded-[3em] font-bold leading-none font-sans";
+  const modeClasses = primary 
+    ? "bg-[#555ab9] text-white" 
+    : "shadow-[rgba(0,0,0,0.15)_0_0_0_1px_inset] bg-transparent text-[#333]";
+  const sizeClasses = {
+    small: "px-[16px] py-[10px] text-[12px]",
+    medium: "px-[20px] py-[11px] text-[14px]",
+    large: "px-[24px] py-[12px] text-[16px]"
+  }[size];
+
   return (
     <button
       type="button"
-      className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
+      className={`${baseClasses} ${modeClasses} ${sizeClasses}`}
       {...props}
     >
       {label}

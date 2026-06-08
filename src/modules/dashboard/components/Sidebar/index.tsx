@@ -4,7 +4,7 @@ import { Dialog } from '@base-ui/react/dialog';
 import { Logo } from '@/modules/core/components/Logo';
 import { TutorialDialog } from '../TutorialDialog';
 import { SettingsDialog } from '../SettingsDialog';
-import './Sidebar.css';
+import { useSyncStatus } from '@/modules/core/hooks/useSyncStatus';
 
 interface SidebarProps {
   onCloseMobile?: () => void;
@@ -21,6 +21,8 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
     deletePlan,
     renameProject,
   } = useApp();
+
+  const syncStatus = useSyncStatus();
 
   const [renamingProjectId, setRenamingProjectId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
@@ -137,7 +139,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
           return (
             <div key={project.id}>
               <div 
-                className={`sidebar-item group cursor-pointer text-sm text-[--color-text] transition-all flex items-center justify-between relative hover:bg-[--color-hover] ${isActive ? 'sidebar-item-active' : ''}`}
+                className={`group cursor-pointer text-sm text-[--color-text] transition-all flex items-center justify-between relative hover:bg-[--color-hover] rounded-[16px] my-[2px] mx-[12px] py-[6px] px-[12px] ${isActive ? '![background:var(--gradient-primary)] !text-white font-medium shadow-[var(--shadow-md)]' : ''}`}
                 onClick={() => setActiveProject(project.id)}
               >
                 {renamingProjectId === project.id ? (
@@ -160,7 +162,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
                 )}
                 {state.projects.length > 1 && (
                   <button 
-                    className="opacity-0 bg-transparent border-none cursor-pointer text-[--color-text-tertiary] text-xs px-1 py-0.5 rounded transition-all shrink-0 leading-none group-hover:opacity-100 hover:text-[--color-text]"
+                    className={`opacity-0 bg-transparent border-none cursor-pointer text-xs px-1 py-0.5 rounded transition-all shrink-0 leading-none group-hover:opacity-100 ${isActive ? '!text-white/80 hover:!text-white' : 'text-[--color-text-tertiary] hover:text-[--color-text]'}`}
                     onClick={(e) => confirmDelete(project.id, true, e)}
                     title="Delete Project"
                   >
@@ -174,7 +176,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
                   {project.plans.map(plan => (
                     <div 
                       key={plan.id}
-                      className={`sidebar-plan-item group text-[13px] text-[--color-text-secondary] cursor-pointer transition-all flex items-center justify-between relative hover:bg-[--color-hover] ${plan.id === state.activePlanId ? 'sidebar-plan-item-active' : ''}`}
+                      className={`group text-[13px] text-[--color-text-secondary] cursor-pointer transition-all flex items-center justify-between relative hover:bg-[--color-hover] rounded-[16px] m-[2px_12px_2px_28px] py-[4px] px-[12px] border-l-0 ${plan.id === state.activePlanId ? '!bg-[--color-surface] !text-[--color-text] font-medium !border-l-[3px] !border-l-transparent [border-image:var(--gradient-primary)_1]' : ''}`}
                       onClick={() => handlePlanClick(plan.id)}
                     >
                       <span className="flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -211,15 +213,13 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
         >
           + New Project
         </button>
-        <div className="sidebar-footer">
-          {isTauri && (
-            <button
-              className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
-              onClick={() => setSettingsOpen(true)}
-            >
-              ⚙ Settings
-            </button>
-          )}
+        <div className="flex flex-col gap-1">
+          <button
+            className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
+            onClick={() => setSettingsOpen(true)}
+          >
+            ⚙ Settings
+          </button>
           <button 
             className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
             onClick={() => setIsTutorialOpen(true)}
@@ -234,6 +234,23 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
             >
               ⬇ Download for {platform === 'mac' ? 'macOS' : platform === 'windows' ? 'Windows' : 'Linux'}
             </button>
+          )}
+          {state.syncProvider && state.syncProvider !== 'none' && (
+            <div className="flex items-center justify-between px-5 pt-1 pb-1.5 text-[12px] text-[--color-text-tertiary] border-t border-[--color-border] mt-1">
+              <span>Cloud Sync</span>
+              {(() => {
+                const hasConfig = 
+                  (state.syncProvider === 'webhook' && !!state.webhookSyncUrl) ||
+                  (state.syncProvider === 'firebase' && !!state.firebaseConfig) ||
+                  (state.syncProvider === 'supabase' && !!(state.supabaseConfig?.url && state.supabaseConfig?.anonKey));
+                
+                if (!hasConfig) return <span className="text-yellow-500">No config</span>;
+                if (syncStatus === 'syncing') return <span className="text-[#8b5cf6] animate-pulse">Syncing...</span>;
+                if (syncStatus === 'success') return <span className="text-green-500">Up to date</span>;
+                if (syncStatus === 'error') return <span className="text-red-500">Not Connected</span>;
+                return <span>Idle</span>;
+              })()}
+            </div>
           )}
         </div>
       </div>

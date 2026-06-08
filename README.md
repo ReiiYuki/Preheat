@@ -71,3 +71,20 @@ The Model Context Protocol (MCP) server allows AI agents to interact with Prehea
 - Source code is located at `scripts/mcp-server/index.ts`.
 - It can be run manually via `pnpm mcp`.
 - The native Tauri app automatically launches it in the background if enabled in settings.
+
+## Troubleshooting
+
+### macOS App Cannot Be Opened ("Apple could not verify...")
+Because Preheat is currently an unsigned open-source application, Apple's Gatekeeper automatically blocks it by default. To open the app:
+
+**Option 1 (Recommended)**
+1. Open **Finder** and navigate to your **Applications** folder.
+2. **Right-click** (or `Control` + Click) on the **Preheat** app icon.
+3. Select **Open** from the context menu.
+4. Click the **Open** button in the warning dialog. The app will launch normally from then on.
+
+**Option 2 (Terminal)**
+If the first method doesn't work, you can clear the quarantine flag via terminal:
+```bash
+xattr -cr /Applications/Preheat.app
+```

@@ -49,7 +49,7 @@ test.describe('MCP Server E2E (SSE)', () => {
     // Wait for server to start
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    const transport = new SSEClientTransport(new URL(`http://localhost:${port}/sse`));
+    const transport = new SSEClientTransport(new URL(`http://127.0.0.1:${port}/sse`));
     
     const client = new Client({
       name: "e2e-test-client",

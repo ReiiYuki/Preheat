@@ -3,7 +3,6 @@ import type { Meta, StoryObj } from '@storybook/tanstack-react';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { Route } from './index';
-import './page.css';
 
 const meta = {
   title: 'Example/Page',

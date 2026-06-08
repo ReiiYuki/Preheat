@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/ReiiYuki/Preheat/compare/v1.4.0...v1.5.0) (2026-06-08)
+
+
+### Features
+
+* show installation instructions after download click ([d78044f](https://github.com/ReiiYuki/Preheat/commit/d78044f89049fe86f6fbdcf44bcc847f203619ab))
+
 # [1.4.0](https://github.com/ReiiYuki/Preheat/compare/v1.3.0...v1.4.0) (2026-06-08)
 
 

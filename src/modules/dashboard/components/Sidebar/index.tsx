@@ -6,7 +6,11 @@ import { TutorialDialog } from '../TutorialDialog';
 import { SettingsDialog } from '../SettingsDialog';
 import './Sidebar.css';
 
-export function Sidebar() {
+interface SidebarProps {
+  onCloseMobile?: () => void;
+}
+
+export function Sidebar({ onCloseMobile }: SidebarProps) {
   const {
     state,
     addProject,
@@ -27,6 +31,18 @@ export function Sidebar() {
 
   const [isTutorialOpen, setIsTutorialOpen] = useState(!state.hasSeenTutorial);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  
+  const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
+  const [platform, setPlatform] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isTauri && typeof window !== 'undefined') {
+      const ua = navigator.userAgent.toLowerCase();
+      if (ua.includes('mac') && !ua.includes('iphone') && !ua.includes('ipad')) setPlatform('mac');
+      else if (ua.includes('win')) setPlatform('windows');
+      else if (ua.includes('linux') && !ua.includes('android')) setPlatform('linux');
+    }
+  }, [isTauri]);
 
   useEffect(() => {
     if (renamingProjectId && renameInputRef.current) {
@@ -67,11 +83,26 @@ export function Sidebar() {
     setItemToDelete(null);
   };
 
+  const handlePlanClick = (id: string) => {
+    setActivePlan(id);
+    if (onCloseMobile) onCloseMobile();
+  };
+
   return (
     <div className="w-[260px] h-screen bg-[--color-surface] border-r border-[--color-border] flex flex-col shrink-0 overflow-y-auto">
-      <div className="flex items-center gap-3 px-5 pt-6 pb-2">
-        <Logo className="w-10 h-10 object-contain drop-shadow-sm" style={{ color: 'var(--color-text)' }} />
-        <span className="font-bold text-lg tracking-wide text-[--color-text]">Preheat</span>
+      <div className="flex items-center justify-between px-5 pt-6 pb-2">
+        <div className="flex items-center gap-3">
+          <Logo className="w-10 h-10 object-contain drop-shadow-sm" style={{ color: 'var(--color-text)' }} />
+          <span className="font-bold text-lg tracking-wide text-[--color-text]">Preheat</span>
+        </div>
+        {onCloseMobile && (
+          <button 
+            className="md:hidden bg-transparent border-none text-[--color-text-tertiary] text-xl cursor-pointer hover:text-[--color-text]"
+            onClick={onCloseMobile}
+          >
+            ✕
+          </button>
+        )}
       </div>
       <div className="font-semibold text-xs text-[--color-text-tertiary] px-5 pb-3 uppercase tracking-wider">
         Hi, {state.user?.name || 'Guest'}
@@ -122,7 +153,7 @@ export function Sidebar() {
                     <div 
                       key={plan.id}
                       className={`sidebar-plan-item group text-[13px] text-[--color-text-secondary] cursor-pointer transition-all flex items-center justify-between relative hover:bg-[--color-hover] ${plan.id === state.activePlanId ? 'sidebar-plan-item-active' : ''}`}
-                      onClick={() => setActivePlan(plan.id)}
+                      onClick={() => handlePlanClick(plan.id)}
                     >
                       <span className="flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
                         {plan.title || 'Untitled Plan'}
@@ -159,7 +190,7 @@ export function Sidebar() {
           + New Project
         </button>
         <div className="sidebar-footer">
-          {typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window && (
+          {isTauri && (
             <button
               className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
               onClick={() => setSettingsOpen(true)}
@@ -173,6 +204,17 @@ export function Sidebar() {
           >
             ? Instructions
           </button>
+          
+          {!isTauri && platform && (
+            <a 
+              href="https://github.com/ReiiYuki/Preheat/releases/latest" 
+              target="_blank" 
+              rel="noreferrer"
+              className="block bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[var(--color-primary)] font-semibold text-left w-full transition-colors font-inherit hover:text-[var(--color-primary-hover)] no-underline"
+            >
+              ⬇ Download for {platform === 'mac' ? 'macOS' : platform === 'windows' ? 'Windows' : 'Linux'}
+            </a>
+          )}
         </div>
       </div>
 

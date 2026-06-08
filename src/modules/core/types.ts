@@ -21,5 +21,3 @@ export interface AppState {
   hasSeenTutorial?: boolean;
   mcpEnabled?: boolean;
 }
-
-export type AppScreen = 'welcome' | 'create-project' | 'dashboard';

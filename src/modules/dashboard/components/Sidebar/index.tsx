@@ -68,7 +68,11 @@ export function Sidebar() {
 
   return (
     <div className="w-[260px] h-screen bg-[--color-surface] border-r border-[--color-border] flex flex-col shrink-0 overflow-y-auto">
-      <div className="font-semibold text-sm text-[--color-text-secondary] px-5 pt-5 pb-3 uppercase tracking-wider">
+      <div className="flex items-center gap-3 px-5 pt-6 pb-2">
+        <img src="/logo.png" alt="Preheat Logo" className="w-10 h-10 object-contain drop-shadow-sm" />
+        <span className="font-bold text-lg tracking-wide text-[--color-text]">Preheat</span>
+      </div>
+      <div className="font-semibold text-xs text-[--color-text-tertiary] px-5 pb-3 uppercase tracking-wider">
         Hi, {state.user?.name || 'Guest'}
       </div>
 
@@ -154,14 +158,12 @@ export function Sidebar() {
           + New Project
         </button>
         <div className="sidebar-footer">
-          {window.__TAURI__ && (
-            <button
-              className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
-              onClick={() => setSettingsOpen(true)}
-            >
-              ⚙ Settings
-            </button>
-          )}
+          <button
+            className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
+            onClick={() => setSettingsOpen(true)}
+          >
+            ⚙ Settings
+          </button>
           <button 
             className="bg-transparent border-none cursor-pointer px-5 py-1.5 text-[13px] text-[--color-text-tertiary] text-left w-full transition-colors font-inherit hover:text-[--color-text-secondary]"
             onClick={() => setIsTutorialOpen(true)}

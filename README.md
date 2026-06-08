@@ -1,73 +1,73 @@
-# React + TypeScript + Vite
+# Preheat ♨️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Preheat** is a local-first, privacy-focused productivity tool and scratchpad designed to help you prepare your thoughts before jumping into work. *Don't wait. Warm the prompt.*
 
-Currently, two official plugins are available:
+## What is Preheat?
+Preheat provides a distraction-free, instantaneous environment to outline projects, write specifications, and draft prompts for AI tools. Instead of opening a heavy IDE or a cloud-based document editor, you can instantly open Preheat and start typing.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+All your data is stored locally on your machine—no accounts, no cloud sync delays, and complete privacy. Preheat operates as both a web application and a native desktop app powered by Tauri.
 
-## React Compiler
+## Features
+- 🚀 **Instant Launch & Local First**: Data is stored entirely locally. Zero latency, works offline.
+- 🔗 **Bi-directional Linking**: Type `[[` to instantly link to other plans or create new ones on the fly.
+- ⚡ **Slash Commands**: Type `/` to insert headings, bullet points, checklists, and dividers without taking your hands off the keyboard.
+- 🎨 **Modern Interface**: Beautiful, rounded gradient UI with smooth transitions and a native feel.
+- 🤖 **Local MCP Server Integration**: When running as a native desktop app, Preheat can run a Model Context Protocol (MCP) server, allowing external AI agents (like Claude Desktop) to read and edit your Preheat plans directly!
+- ⚙️ **Autostart Support**: Configure the app to launch automatically when your computer starts.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## How to Use the Product
+1. **Create a Project**: Organize your thoughts by creating projects in the left sidebar.
+2. **Write Plans**: Inside a project, create "plans" (documents) and use Markdown to format them.
+3. **Link Ideas**: Use `[[` to mention or create new plans within the same project.
+4. **Desktop App**: For the best experience, run the Preheat desktop app to utilize the MCP server and system-wide autostart.
 
-## Expanding the ESLint configuration
+## How to Develop
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18+)
+- [pnpm](https://pnpm.io/)
+- [Rust](https://www.rust-lang.org/) (for building the Tauri desktop app)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Setup & Installation
+Clone the repository and install dependencies:
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Running Locally
+To run the web app in development mode:
+```bash
+pnpm dev
 ```
+
+To run the native desktop app (Tauri) in development mode:
+```bash
+pnpm tauri dev
+```
+
+### Building for Production
+To build the web application:
+```bash
+pnpm build
+```
+
+To build the standalone native desktop app installer:
+```bash
+pnpm tauri build
+```
+
+### Running Tests
+Preheat uses Vitest for unit testing and Playwright for end-to-end testing.
+```bash
+# Run unit tests
+pnpm test
+
+# Run End-to-End tests
+pnpm test:e2e
+```
+
+### MCP Server
+The Model Context Protocol (MCP) server allows AI agents to interact with Preheat's local state. 
+- Source code is located at `scripts/mcp-server/index.ts`.
+- It can be run manually via `pnpm mcp`.
+- The native Tauri app automatically launches it in the background if enabled in settings.

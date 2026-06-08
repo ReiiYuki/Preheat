@@ -1,5 +1,9 @@
 use std::sync::Mutex;
-use tauri::{AppHandle, Manager, State};
+use tauri::{
+    AppHandle, Manager, RunEvent, State, WindowEvent,
+    menu::{Menu, MenuItem},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+};
 use tauri_plugin_shell::{process::CommandChild, ShellExt};
 
 struct McpState {
@@ -53,7 +57,7 @@ fn get_mcp_status(state: State<'_, McpState>) -> Result<bool, String> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_autostart::Builder::new().build())
         .plugin(tauri_plugin_os::init())
@@ -74,13 +78,84 @@ pub fn run() {
                         .build(),
                 )?;
             }
-            
-            // Initial spawn
+
+            // Build tray menu
+            let show_i = MenuItem::with_id(app, "show", "Show Preheat", true, None::<&str>)?;
+            let hide_i = MenuItem::with_id(app, "hide", "Hide Preheat", true, None::<&str>)?;
+            let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+            let menu = Menu::with_items(app, &[&show_i, &hide_i, &quit_i])?;
+
+            // Build tray icon
+            let _tray = TrayIconBuilder::with_id("main-tray")
+                .icon(app.default_window_icon().unwrap().clone())
+                .menu(&menu)
+                .tooltip("Preheat")
+                .on_menu_event(|app, event| match event.id.as_ref() {
+                    "show" => {
+                        if let Some(window) = app.get_webview_window("main") {
+                            let _ = window.show();
+                            let _ = window.set_focus();
+                        }
+                    }
+                    "hide" => {
+                        if let Some(window) = app.get_webview_window("main") {
+                            let _ = window.hide();
+                        }
+                    }
+                    "quit" => {
+                        // Kill MCP server before exiting
+                        let state = app.state::<McpState>();
+                        let mut lock = state.child.lock().unwrap();
+                        if let Some(child) = lock.take() {
+                            let _ = child.kill();
+                        }
+                        app.exit(0);
+                    }
+                    _ => {}
+                })
+                .on_tray_icon_event(|tray, event| {
+                    if let TrayIconEvent::Click {
+                        button: MouseButton::Left,
+                        button_state: MouseButtonState::Up,
+                        ..
+                    } = event
+                    {
+                        let app = tray.app_handle();
+                        if let Some(window) = app.get_webview_window("main") {
+                            if window.is_visible().unwrap_or(false) {
+                                let _ = window.hide();
+                            } else {
+                                let _ = window.show();
+                                let _ = window.set_focus();
+                            }
+                        }
+                    }
+                })
+                .build(app)?;
+
+            // Initial spawn of MCP server
             let state = app.state::<McpState>();
             let _ = start_mcp_server(app.handle().clone(), state);
 
             Ok(())
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application");
+
+    app.run(|app_handle, event| {
+        match event {
+            RunEvent::WindowEvent {
+                event: WindowEvent::CloseRequested { api, .. },
+                label,
+                ..
+            } => {
+                // Prevent the window from closing; hide it instead
+                api.prevent_close();
+                if let Some(window) = app_handle.get_webview_window(&label) {
+                    let _ = window.hide();
+                }
+            }
+            _ => {}
+        }
+    });
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Preheat",
-  "version": "0.1.0",
+  "version": "1.4.0",
   "identifier": "com.reiiyuki.preheat",
   "build": {
     "frontendDist": "../dist",
@@ -21,6 +21,12 @@
     ],
     "security": {
       "csp": null
+    },
+    "trayIcon": {
+      "id": "main-tray",
+      "iconPath": "icons/32x32.png",
+      "tooltip": "Preheat",
+      "iconAsTemplate": true
     }
   },
   "bundle": {

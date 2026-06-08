@@ -1,14 +1,14 @@
 {
   "name": "preheat",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.4.0",
   "repository": "ReiiYuki/Preheat",
   "type": "module",
   "scripts": {
     "tauri": "tauri",
     "dev": "vite",
     "build:mcp": "esbuild scripts/mcp-server/index.ts --bundle --platform=node --outfile=src-tauri/mcp-server.cjs",
-    "build": "tsc -b && vite build && pnpm build:mcp",
+    "build": "tsc -b && vite build && pnpm build:mcp && node scripts/post-build.js",
     "lint": "oxlint .",
     "lint:conventions": "tsx scripts/preheat-lint/index.ts audit-all",
     "mcp": "tsx scripts/mcp-server/index.ts",

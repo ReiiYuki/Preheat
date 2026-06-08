@@ -5,6 +5,7 @@ import { Logo } from '@/modules/core/components/Logo';
 import { TutorialDialog } from '../TutorialDialog';
 import { SettingsDialog } from '../SettingsDialog';
 import { useSyncStatus } from '@/modules/core/hooks/useSyncStatus';
+import { DownloadInstructionDialog } from '../DownloadInstructionDialog';
 
 interface SidebarProps {
   onCloseMobile?: () => void;
@@ -33,6 +34,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
 
   const [isTutorialOpen, setIsTutorialOpen] = useState(!state.hasSeenTutorial);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isDownloadInstructionOpen, setIsDownloadInstructionOpen] = useState(false);
   
   const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
   const [platform, setPlatform] = useState<string | null>(null);
@@ -65,6 +67,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      setIsDownloadInstructionOpen(true);
     }
   };
 
@@ -282,6 +285,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
 
       <TutorialDialog open={isTutorialOpen} onOpenChange={setIsTutorialOpen} />
       <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <DownloadInstructionDialog open={isDownloadInstructionOpen} onOpenChange={setIsDownloadInstructionOpen} platform={platform as any} />
     </div>
   );
 }
